@@ -3,7 +3,7 @@
 
 A ***streamlined*** program for analyzing proximity ligation experiments from mapped files in the SAM format to: 
 1. Generate a list of chimeric interactions with their coordinates, sequence, and folding energy, 
-2. Plot contact density map of selected genes, 
+2. Plot contact density map of selected genes and viewpoint graphs, 
 3. Generate intra-/intermolecular RNA structure of any selected regions.
 
 Additionally, plot differential coverage map between experiments.
@@ -168,16 +168,38 @@ Column 16: Overlap Score
 Column 17: **Type of Chimera** (See chim_types for a visualization of the types of chimera)
 
 ### Contact Density Maps
-The axis are the genome lengths in both orientation (5'-3' and 3'-5'), each spot represents chimeras. Spots close to the diagonal are short-ranged interactions that can be easily folded into structures, while spots further away are long-ranged interactions. 
-![Livefire1-3_Norm]<img src="https://user-images.githubusercontent.com/110675091/183696922-01842208-c591-419c-9edd-e77208d8751a.png" align="right">
+<img src="https://user-images.githubusercontent.com/110675091/183696922-01842208-c591-419c-9edd-e77208d8751a.png" align="right" height="300" width="300">
 
+The axis are the genome lengths with each spot representing chimeras. 
 
+Chimeras ligated in 5'-3' and 3'-5' orientations are plotted above and below the diagonal respectively. 
+
+Spots close to the diagonal are short-ranged interactions that can be easily folded into structures, while spots further away are long-ranged interactions. 
+
+The contrast of the spots corresponds to the chimeric counts, with darker spots representing a higher count. 
+
+Although the contrast is capped at an upper quantile limit (default 95%).
+
+### Viewpoint Graphs
+The x-axis represents the nucleotide positions and y-axis represents the frequency of chimeric interactions. 
+
+The graph shows the abundance of interactions and its positions along the RNA.
 
 ### RNA Structures
+To understand the secondary structures, read:
 
+https://varna.lri.fr/
+
+The structures are colour coded based on log2 of supporting reads, with red being the most supported, blue the least, and blank for none. 
+
+(VARNA instructions)
 
 ### Differential Coverage Maps
+Read similarly to **Contact Density Maps**.
 
+However, it is plotted in two colours, with red being interactions enriched in one condiition and blue for the other.
+
+Also, instead of the contrast reflecting chimeric counts, here, it represents significance (p-value) for significanyly differential interactions.
 
 
 
