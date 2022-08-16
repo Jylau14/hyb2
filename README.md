@@ -168,7 +168,7 @@ Column 16: Overlap Score
 Column 17: **Type of Chimera** (See chim_types for a visualization of the types of chimera)
 
 ### Contact Density Maps
-<img src="https://user-images.githubusercontent.com/110675091/183696922-01842208-c591-419c-9edd-e77208d8751a.png" align="right" height="300" width="300">
+<img src="https://user-images.githubusercontent.com/110675091/184885171-6a2328d5-ee4a-47e3-ae8a-4184e5f9aec5.png" align="right" height="300" width="300"> 
 
 The axis are the genome lengths with each spot representing chimeras. 
 
@@ -180,21 +180,32 @@ The contrast of the spots corresponds to the chimeric counts, with darker spots 
 
 Although the contrast is capped at an upper quantile limit (default 95%).
 
+If 2 genes were input in the command line, the  nuclotide positions of the first gene will be plotted as the x-axis, and the other on y-axis.
+
 ### Viewpoint Graphs
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/110675091/184885181-90b10327-67e6-44ed-87f6-81b896b8defc.png" height="200" width="350">
+</p>
+
 The x-axis represents the nucleotide positions and y-axis represents the frequency of chimeric interactions. 
 
 The graph shows the abundance of interactions and its positions along the RNA.
 
-### RNA Structures
-To understand the secondary structures, read:
 
-https://varna.lri.fr/
+### RNA Structures
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/110675091/184883583-d92dcdff-803a-4720-bbeb-d6085be9d30f.png" height="150" width="900">
+</p>
+
+To understand the secondary structures, read: https://varna.lri.fr/
 
 The structures are colour coded based on log2 of supporting reads, with red being the most supported, blue the least, and blank for none. 
 
 (VARNA instructions)
 
 ### Differential Coverage Maps
+<img src="https://user-images.githubusercontent.com/110675091/184888561-7ad45644-eb51-43db-8728-73fb58496ef0.png" align="right" height="300" width="300">
+
 Read similarly to **Contact Density Maps**.
 
 However, it is plotted in two colours, with red being interactions enriched in one condiition and blue for the other.
