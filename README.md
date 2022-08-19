@@ -168,7 +168,11 @@ Column 16: Overlap Score
 Column 17: **Type of Chimera** (See chim_types for a visualization of the types of chimera)
 
 ### Contact Density Maps
-<img src="https://user-images.githubusercontent.com/110675091/184885171-6a2328d5-ee4a-47e3-ae8a-4184e5f9aec5.png" align="right" height="300" width="300"> 
+<p align="middle">
+  <img src="https://user-images.githubusercontent.com/110675091/185672361-a9c49db9-9c93-4dff-aa3e-0545a70d36e8.png" height="330" width="330" />
+  <img src="https://user-images.githubusercontent.com/110675091/185672386-7175cf64-733e-485e-9639-365df5ce8240.png" height="330" width="330" />
+  <img src="https://user-images.githubusercontent.com/110675091/185671422-c84c289c-4b14-4505-847e-1bb869d99e89.png" height="330" width="330" />
+</p>
 
 The axis are the genome lengths with each spot representing chimeras. 
 
@@ -204,11 +208,11 @@ The structures are colour coded based on log2 of supporting reads, with red bein
 (VARNA instructions)
 
 ### Differential Coverage Maps
-<img src="https://user-images.githubusercontent.com/110675091/184888561-7ad45644-eb51-43db-8728-73fb58496ef0.png" align="right" height="300" width="300">
+<img src="https://user-images.githubusercontent.com/110675091/185672933-0846b05c-943f-4e22-b341-97f5df3efc96.png" align="right" height="400" width="400">
 
 Read similarly to **Contact Density Maps**.
 
-However, it is plotted in two colours, with red being interactions enriched in one condiition and blue for the other.
+However, it is plotted in two colours, with red being interactions enriched in one condition and blue for the other.
 
 Also, instead of the contrast reflecting chimeric counts, here, it represents significance (p-value) for significanyly differential interactions.
 
