@@ -27,7 +27,7 @@ Linux Operating System with Miniconda Installed
 
 If Miniconda not installed, read:
 
-https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html
+> https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html
 
 ## Installation
 Hyb2 can be downloaded **into bin** from GitHub with:
@@ -58,9 +58,27 @@ To run the program, the first thing to have is the sequence alignment map (SAM) 
 
 If the fasta or fastq files from RNA proximity ligation experiments are not mapped to reference sequences, this program contain a function to generate a SAM file using bowtie2.
 
-The second file needed is the reference sequences in fasta format.
+The second file needed will contain the reference fasta sequences.
 
-**VARNA** is needed to visualize the RNA structures.
+**VARNA** is needed to visualize the RNA structures. 
+
+It can be downloaded from:
+> https://varna.lri.fr/
+
+### Reference Fasta Files
+The following ID format is preferred to provide a more complete set of information on the sequences:
+
+> \>Gene stable ID version, Transcript stable ID version, Gene name, Gene type
+
+E.g.
+
+Downloaded from BioMart:
+
+> \>ENSG00000007372.25|ENST00000638963.1|PAX6|protein_coding
+
+Formatted in the pipeline:
+
+> \>ENSG00000007372.25_ENST00000638963.1_PAX6_mRNA
 
 ## Running the Program
 Hyb2 environment needs to be activated for essential softwares.
@@ -201,7 +219,8 @@ The graph shows the abundance of interactions and its positions along the RNA.
   <img src="https://user-images.githubusercontent.com/110675091/184883583-d92dcdff-803a-4720-bbeb-d6085be9d30f.png" height="150" width="900">
 </p>
 
-To understand the secondary structures, read: https://varna.lri.fr/
+To understand the secondary structures, read: 
+> https://varna.lri.fr/
 
 The structures are colour coded based on log2 of supporting reads, with red being the most supported, blue the least, and blank for none. 
 
