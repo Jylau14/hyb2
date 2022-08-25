@@ -1,0 +1,76 @@
+#!/bin/bash -e
+#sam2hyb takes an input SAM file with compulsory additional TAGs: AS and NM (needed for score) and the database used for mapping, 
+#filters and converts it into hyb format compatible with further downstream analysis pipelines
+
+#input sam file, input db file, output file prefix
+#sam2hyb -i 45391.sam -d ~/Virus_Structure/ZIKV_Align/Genome_Filled/db/ZBRA/ZBRA_Filled.fasta -o test_sam2hyb
+
+#hval=value - hybrid selection threshold (default=0.1)
+#gmax=value - max gap/overlap between hybrid bits (4)
+#hmax=value - max hits per hybrid (default=10)
+hval=0.1
+gmax=4
+hmax=10
+
+# parsing command line options
+while getopts "i:d:o:v:g:h:" OPTION
+do
+     case $OPTION in
+         i) SAM=$OPTARG ;;
+         d) DB=$OPTARG ;;
+         o) OUT=$OPTARG ;;
+         v) hval=$OPTARG ;;
+         g) gmax=$OPTARG;;
+         h) hmax=$OPTARG;;
+	 ?) 
+
+             echo "incorrect option"
+             exit 0
+             ;;
+     esac
+done
+
+echo "Processing SAM file..."
+
+#Filtering and transforming input SAM file
+sam_filt $SAM > ${SAM/.sam/.filt.sam}
+
+#Scoring and converting filtered SAM file to blast format, collapse same sequence reads, filter for high confidence reads, remove duplicates, and compile into hyb format with fasta sequence for each entry, coordinates, and score
+sam2blast_2 ${SAM/.sam/.filt.sam} > $OUT".blast"
+collapse_blast.sh $OUT".blast" > $OUT".collapse.blast"
+mtophits_blast $OUT".collapse.blast" > $OUT"_mtophits.blast"
+create_reference_file.pl $OUT"_mtophits.blast" > $OUT"_mtophits.ref"
+remove_duplicate_hits_blast.pl $OUT"_mtophits.ref" $OUT"_mtophits.blast" | rm_blast_dup > $OUT"_singleE.blast"
+blast_stats_2 $OUT"_singleE.blast" > $OUT"_singleE.blast_stats.txt"
+get_mtop_hybrids.pl BLAST_THRESHOLD=$hval MODE=2 MAX_OVERLAP=$gmax MAX_HITS_PER_SEQUENCE=$hmax OUTPUT_FORMAT=HYB $OUT".blast" > $OUT"_TEMP_FILE1_TXT"
+getseqs_sam $OUT"_TEMP_FILE1_TXT" ${SAM/.sam/.filt.sam} > $OUT"_hybrids.fasta" 
+txt2hyb.awk $OUT"_hybrids.fasta" $OUT"_TEMP_FILE1_TXT" > $OUT"_hybrids.hyb"
+remove_duplicate_hybrids_hOH5.pl PREFER_MIM=1 $OUT"_mtophits.ref" $OUT"_hybrids.hyb" > $OUT"_hybrids_ua.hyb"
+
+#Create database using input fasta file, calculate folding energy for each entry in hyb file, and collapse same sequence reads
+if [ ! -e ${DB/fasta/tab} ]
+then
+	echo "Making database..."
+	make_hyb_db $DB
+fi
+hyb2fasta_bits_allRNAs.awk ${DB/fasta/tab} $OUT"_hybrids_ua.hyb"
+hybrid-min $OUT"_hybrids_ua.bit_1.fasta" $OUT"_hybrids_ua.bit_2.fasta" 2>&1 > /dev/null
+Ct2B_GK_3.pl $OUT"_hybrids_ua.bit_1.fasta-"$OUT"_hybrids_ua.bit_2.fasta.ct" > $OUT"_hybrids_ua.vienna"
+add_dG_hyb.pl $OUT"_hybrids_ua.hyb" $OUT"_hybrids_ua.vienna" > $OUT"_hybrids_ua_dg.hyb"
+collapse_hyb.sh $OUT"_hybrids_ua_dg.hyb" | filter_homopolymers_2.awk | hyb_mapped_position_overlaps_3.awk | hyb_chim_types.awk > $OUT".hyb"
+awk '$16>=5' $OUT".hyb" > $OUT"_homodimers.hyb"
+make_nicer_vienna_hOH5.awk $OUT"_hybrids_ua.vienna" > $OUT"_hybrids_ua.viennad"
+hybrid_stats $OUT".hyb" > $OUT"_hybrids.hyb_stats.txt"
+
+echo "Converted to hyb format."
+
+#Clear intermediate files
+rm $OUT"_hybrids_ua.bit_1.fasta-"$OUT"_hybrids_ua.bit_2.fasta.run"
+rm $OUT"_hybrids_ua.bit_1.fasta-"$OUT"_hybrids_ua.bit_2.fasta.37.plot"
+rm $OUT"_hybrids_ua.bit_1.fasta-"$OUT"_hybrids_ua.bit_2.fasta.37.ext"
+rm $OUT"_hybrids_ua.bit_1.fasta-"$OUT"_hybrids_ua.bit_2.fasta.dG"
+rm $OUT"_hybrids_ua.bit_1.fasta-"$OUT"_hybrids_ua.bit_2.fasta.asc"
+rm $OUT"_TEMP_FILE1_TXT" $OUT"_hybrids_ua.hyb" $OUT"_hybrids_ua.vienna"
+rm $OUT"_hybrids.fasta" $OUT"_mtophits.blast" $OUT"_mtophits.ref"
+rm $OUT".temp.blast" $OUT".count.blast" $OUT".collapse.blast"
+rm $OUT"_hybrids.hyb" $OUT"_hybrids_ua_dg.temp.hyb" $OUT"_hybrids_ua_dg.count.hyb" $OUT"_hybrids_ua_dg.hyb"

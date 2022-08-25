@@ -1,0 +1,17 @@
+#!/bin/bash
+#6th field, CIGAR string indicating mapping matches, if splicing (N) occur 0 to 1 time, pass to next
+awk '{n=split($6,a,"N"); if (n<3) print $0}' $1 |
+#2nd filter and transformation
+#if no splicing, pass
+#splitting lines with CIGAR strings containing splicing into fragments to be assembled into 2 lines, compatible with the hyb pipeline
+#2nd field, SAM flag, of split lines adjusted for primary/secondary alignment
+#12th to last fields, additional info, TAGs: NM and AS required for sam2hyb
+	awk -v cap=[A-Z] 'OFS="\t" {if ($6~/N/) n=split($6,a,"N"); m=split(a[n-1],b,cap); o=split(a[n],c,"M");
+	if ($1~/^@/ || $6!~/N/) print $0; 
+	if ($1!~/^@/ && $2<=16 && $2!=4 && $0~/NM:i:/ && $0~/AS:i:/ && $6~/N/) print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"0b[m-2]"S"b[m-1]"M"b[m]"S"c[o-1]"S"c[o]"\t"$7"\t"$8"\t"$9"\t"$10"\t"$11"\t"$12"\t"$13"\t"$14"\t"$15"\t"$16"\t"$17"\t"$18"\t"$19"\t"$20"\n"$1"\t"$2+256"\t"$3"\t"$4+b[m]+b[m-1]+b[m-2]"\t"$5"\t"0b[m-2]"S"b[m-1]"S"c[o-1]"M"c[o]"\t"$7"\t"$8"\t"$9"\t"$10"\t"$11"\t"$12"\t"$13"\t"$14"\t"$15"\t"$16"\t"$17"\t"$18"\t"$19"\t"$20; 
+	if ($1!~/^@/ && $2>=256 && $2<=272 && $0~/NM:i:/ && $0~/AS:i:/ && $6~/N/) print $1"\t"$2"\t"$3"\t"$4"\t"$5"\t"0b[m-2]"S"b[m-1]"M"b[m]"S"c[o-1]"S"c[o]"\t"$7"\t"$8"\t"$9"\t"$10"\t"$11"\t"$12"\t"$13"\t"$14"\t"$15"\t"$16"\t"$17"\t"$18"\t"$19"\t"$20"\n"$1"\t"$2-256"\t"$3"\t"$4+b[m]+b[m-1]+b[m-2]"\t"$5"\t"0b[m-2]"S"b[m-1]"S"c[o-1]"M"c[o]"\t"$7"\t"$8"\t"$9"\t"$10"\t"$11"\t"$12"\t"$13"\t"$14"\t"$15"\t"$16"\t"$17"\t"$18"\t"$19"\t"$20}' | 
+#modify READ ID for compatibility
+	awk '{if ($1!~/^@/) n=split($1,a,":"); 
+	if ($1~/^@/ || $1!~/:/) print $1"\t"$0; 
+	if ($1~/:/ && $2<2048) print a[n-2]"-"a[n-1]"-"a[n]"_1""\t"$0}' | 
+	cut --complement -f2 

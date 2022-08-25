@@ -1,0 +1,52 @@
+#!/bin/bash -e
+#plot contact density map
+# -i hyb_output -a GENE_to_plot(mapped ID, ENSG_ENST_ZIKV-PE243-2015_virusRNA) -q quantile_upper_limit_for_normalizing_heatmap_contrast (default=0.95)
+
+LIMIT=0.95
+# parsing command line options
+while getopts "i:a:b:q:w:x:y:z:" OPTION
+do
+        case $OPTION in
+                i) HYB=$OPTARG ;;
+                a) GENE_1=$OPTARG ;;
+                b) GENE_2=$OPTARG ;;
+                q) LIMIT=$OPTARG ;;
+                w) X1=$OPTARG ;;
+                x) X2=$OPTARG ;;
+                y) Y1=$OPTARG ;;
+                z) Y2=$OPTARG ;;
+                ?)
+
+                echo "incorrect option"
+                exit 0
+                ;;
+        esac
+done
+
+#calculate chimeras in 10x10 bin for plotting
+if [ -z $GENE_2 ] && [ -z $X1 ] && [ -z $X2 ] && [ -z $Y1 ] && [ -z $Y2 ]
+then
+	echo "Plotting contact density map of $GENE_1 ..."
+	plot_hybrids_3.awk USE_ENTIRE_HYBRIDS=1 BIN_SIZE=10 GENE_1=$GENE_1 GENE_2=$GENE_1 $HYB | sed '2s/^/x\ty\tcount\n/' > ${HYB/.hyb/.$GENE_1".entire.txt"}
+	contact_density_map_indiv.R ${HYB/.hyb/.$GENE_1".entire.txt"} $LIMIT
+	echo "Contact Density Map of $GENE_1 Saved"
+elif [ ! -z $GENE_2 ] && [ -z $X1 ] && [ -z $X2 ] && [ -z $Y1 ] && [ -z $Y2 ]
+then
+	echo "Plotting contact density map of $GENE_1 and $GENE_2 ..."
+	awk -v GENE_1=$GENE_1 -v GENE_2=$GENE2 '{if ($4==GENE_1) print $0; if ($10==GENE_1) print $1"\t"$2"\t"$3"\t"$10"\t"$11"\t"$12"\t"$13"\t"$14"\t"$15"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9}' $HYB | plot_hybrids_3.awk USE_ENTIRE_HYBRIDS=1 BIN_SIZE=10 GENE_1=$GENE_1 GENE_2=$GENE_2 | sed '2s/^/x\ty\tcount\n/' > ${HYB/.hyb/.$GENE_1"-"$GENE_2".entire.txt"}
+	cdm_2genes.R ${HYB/.hyb/.$GENE_1"-"$GENE_2".entire.txt"} $LIMIT $GENE_1 $GENE_2
+	echo "Contact Density Map of $GENE_1 and $GENE_2 Saved"
+fi
+
+if [ -z $GENE_2 ] && [ ! -z $X1 ] && [ ! -z $X2 ] && [ ! -z $Y1 ] && [ ! -z $Y2 ]
+then
+	echo "Plotting zoomed-in contact density map of $GENE_1 ..."
+	cdm_indiv_zoom.R ${HYB/.hyb/.$GENE_1".entire.txt"} $X1 $X2 $Y1 $Y2 $LIMIT 
+	echo "Zoomed-in Contact Density Map of $GENE_1 Saved"
+elif [ ! -z $GENE_2 ] &&  [ ! -z $X1 ] && [ ! -z $X2 ] && [ ! -z $Y1 ] && [ ! -z $Y2 ]
+then
+	echo "Plotting zoomed-in contact density map of $GENE_1 and $GENE_2 ..."
+	cdm_indiv_zoom.R ${HYB/.hyb/.$GENE_1"-"$GENE_2".entire.txt"} $X1 $X2 $Y1 $Y2 $LIMIT $GENE_1 $GENE_2
+	echo "Zoomed-in Contact Density Map of $GENE_1 and $GENE_2 Saved"
+fi
+

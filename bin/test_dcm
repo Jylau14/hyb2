@@ -1,0 +1,53 @@
+#!/bin/bash -e
+#finds significant differences between 2 sets of data
+
+#allows up to 4 datasets for each condition (a,b,c,d - condition one) (i,j,k,l - condition two) 
+#minimum 2 datasets for each condition
+
+# -m minimum reads for DESeq2, default = 2
+# -r range used to determine individual interactions, default = +/- 100, meaning each interaction would span 200nt range, a bigger range risk missing out interactions, while a smaler range risk reading one interaction as two
+# -p upper quantile limit for contrast, default 0.95
+
+#input prefix
+#plot_differential_map -a test_1_rep1 -b test_1_rep2 -i test_2_rep1 -j test_2_rep2 -m 2 -r 100 -p 0.95
+
+min=2
+range=100
+LIMIT=0.95
+
+# parsing command line options
+while getopts "a:b:c:d:i:j:k:l:m:r:p:" OPTION
+do
+        case $OPTION in
+                a) a1=$OPTARG ;;
+                b) a2=$OPTARG ;;
+                c) a3=$OPTARG ;;
+                d) a4=$OPTARG ;;
+                i) b1=$OPTARG ;;
+                j) b2=$OPTARG ;;
+                k) b3=$OPTARG ;;
+                l) b4=$OPTARG ;;
+                m) min=$OPTARG ;;
+                r) range=$OPTARG ;;
+                p) LIMIT=$OPTARG ;;
+                ?)
+
+                echo "incorrect option"
+                exit 0
+                ;;
+        esac
+done
+
+#Input file names
+A1=${a1/.entire.txt/}
+A2=${a2/.entire.txt/}
+A3=${a3/.entire.txt/}
+A4=${a4/.entire.txt/}
+B1=${b1/.entire.txt/}
+B2=${b2/.entire.txt/}
+B3=${b3/.entire.txt/}
+B4=${b4/.entire.txt/}
+
+echo -e '#seq_ID''\t'$A1'\t'$A2'\t'$A3'' '\t'$A4'' '\t'$B1'\t'$B2'\t'$B3' ''\t'$B4' ' | sed $'s/\t //g;s/-/_/g' > table.txt
+#make_hybrid_annotation_table.pl $A1".forTable.txt" $A2".forTable.txt" $A3".forTable.txt" $A4".forTable.txt" $B1".forTable.txt" $B2".forTable.txt" $B3".forTable.txt" $B4".forTable.txt" | awk 'NR>1{gsub("NA","0",$0); print $0}' >> table.txt
+

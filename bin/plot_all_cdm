@@ -1,0 +1,24 @@
+#!/bin/bash
+#plot ALL contact density map
+# -g GENE_to_plot(mapped ID, ENSG_ENST_ZIKV-PE243-2015_virusRNA) -q quantile_upper_limit_for_normalizing_heatmap_contrast (default=0.95)
+
+LIMIT=0.95
+# parsing command line options
+while getopts "g:q:" OPTION
+do
+        case $OPTION in
+                g) GENE=$OPTARG ;;
+                q) LIMIT=$OPTARG ;;
+                ?)
+
+                echo "incorrect option"
+                exit 0
+                ;;
+        esac
+done
+
+#calculate chimeras in 10x10 bin for plotting
+for f in *dg.hyb; do plot_hybrids_3.awk USE_ENTIRE_HYBRIDS=1 BIN_SIZE=10 GENE_1=$GENE GENE_2=$GENE $f > ${f/hybrids_ua_dg.hyb/$GENE.entire.txt}; done
+
+#R script normalize data and plot
+contact_density_map.R $GENE $LIMIT

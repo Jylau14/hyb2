@@ -1,0 +1,63 @@
+#!/bin/bash -e 
+
+# parsing command line options
+while getopts "i:1:2:a:b:" OPTION
+do
+     case $OPTION in
+         i) HYB=$OPTARG ;;
+         1) DB_1=$OPTARG ;;
+         2) DB_2=$OPTARG ;;
+         a) GENE_1=$OPTARG ;;
+         b) GENE_2=$OPTARG ;;
+         ?)
+
+             echo "incorrect option"
+             exit 0
+             ;;
+     esac
+done
+
+if [ -z $DB_2 ]
+then
+	 DB_2=$DB_1
+fi
+
+#Create file with ID and length of RNA
+LEN_1=$(expr $(grep -A1 $GENE_1 $DB_1 | awk 'FNR==2' | wc -c) - 1)
+echo -e $GENE_1"\t"$LEN_1 > $GENE_1".length.txt"
+
+#Convert hyb to blast format to calculate coverage of $GENE_1 and $GENE_1 interactions per nt position
+hyb2blast.awk $HYB | grep $GENE_1 | head -n1 > $GENE_1"_ref.blast"
+awk -v GENE_1=$GENE_1 '$4~GENE_1 && $10~GENE_1' $HYB | hyb2blast.awk > ${HYB/.hyb/"_"$GENE_1".blast"}
+blast2gplot.pl EXP=${HYB/.hyb/} N_GENES=1 REF_BLAST_FILE=$GENE_1"_ref.blast" BLAST_FILE=${HYB/.hyb/"_"$GENE_1".blast"} GENE_LENGTHS_FILE=$GENE_1".length.txt"
+
+#Plot $GENE_1 viewpoint of $GENE_1 interactions using gplot output 
+viewpoint_graph.R ${HYB/.hyb/"_"$GENE_1".gplot"}
+
+#Calculate coverage of $GENE_1 homodimers per nt position
+#Plot $GENE_1 viewpoint of $GENE_1 homodimers
+if [ -s ${HYB/.hyb/_homodimers.hyb} ]
+then
+	awk -v GENE_1=$GENE_1 '$4~GENE_1 && $10~GENE_1' ${HYB/.hyb/_homodimers.hyb} | hyb2blast.awk > ${HYB/.hyb/"_"$GENE_1"_homodimers.blast"}
+	blast2gplot.pl EXP=${HYB/.hyb/_homodimers} N_GENES=1 REF_BLAST_FILE=$GENE_1"_ref.blast" BLAST_FILE=${HYB/.hyb/"_"$GENE_1"_homodimers.blast"} GENE_LENGTHS_FILE=$GENE_1".length.txt"
+	viewpoint_graph.R ${HYB/.hyb/"_homodimers_"$GENE_1".gplot"}
+fi
+
+#Calculate coverage of $GENE_1 and $GENE_2 interactions per nt position
+if [ ! -z $GENE_2 ]
+then
+	grep $GENE_1 $HYB | grep $GENE_2 | hyb2blast.awk > ${HYB/.hyb/"_"$GENE_1"_"$GENE_2".blast"}
+	blast2gplot.pl EXP=${HYB/.hyb/"_"$GENE_2} N_GENES=1 REF_BLAST_FILE=$GENE_1"_ref.blast" BLAST_FILE=${HYB/.hyb/"_"$GENE_1"_"$GENE_2".blast"} GENE_LENGTHS_FILE=$GENE_1".length.txt"
+
+	LEN_2=$(expr $(grep -A1 $GENE_2 $DB_2 | awk 'FNR==2' | wc -c) - 1)
+	echo -e $GENE_2"\t"$LEN_2 > $GENE_2".length.txt"
+
+	hyb2blast.awk $HYB | grep $GENE_2 | head -n1 > $GENE_2"_ref.blast"
+	blast2gplot.pl EXP=${HYB/.hyb/"_"$GENE_1} N_GENES=1 REF_BLAST_FILE=$GENE_2"_ref.blast" BLAST_FILE=${HYB/.hyb/"_"$GENE_1"_"$GENE_2".blast"} GENE_LENGTHS_FILE=$GENE_2".length.txt"
+
+#Plot $GENE_1 viewpoint of $GENE_1 and $GENE_2 interactions
+	viewpoint_graph.R ${HYB/.hyb/"_"$GENE_2"_"$GENE_1".gplot"}
+#Plot $GENE_2 viewpoint
+	viewpoint_graph.R ${HYB/.hyb/"_"$GENE_1"_"$GENE_2".gplot"}
+fi
+
