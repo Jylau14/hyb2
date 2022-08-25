@@ -51,7 +51,7 @@ done
 #Reformat reference sequence files
 if grep -qm1 '|' $DB_1
 then
-	fasta_hyb2_formatting $DB_1
+	fasta_hyb2_formatting -i $DB_1
 	DB_1=${DB_1/.fasta/.hyb.fasta}
 fi
 
@@ -59,7 +59,7 @@ if [ ! -z $DB_2 ]
 then
 	if grep -qm1 '|' $DB_2
 	then
-		fasta_hyb2_formatting $DB_2
+		fasta_hyb2_formatting -i $DB_2
 		DB_2=${DB_2/.fasta/.hyb.fasta}
 	fi
 fi
@@ -123,7 +123,7 @@ if [ ! -z $GENE_2 ]
 then
 	plot_cdm -i $OUT".hyb" -q $LIMIT -a $GENE_1 -b $GENE_2
 else
-	echo "Failed to plot contact density map! Check input arguments (Genes)." 1>&2
+	echo "Failed to plot contact density map of second gene! Check input arguments (Gene -b)." 1>&2
 fi
 
 if [ -z $GENE_2 ] && [ -z $Y_COORD ] && [ ! -z $LEN ]
@@ -141,7 +141,7 @@ then
 	Y_END=$(($Y_COORD+$LEN-1))
 	plot_cdm -i $OUT".hyb" -q $LIMIT -a $GENE_1 -b $GENE_2 -w $X_COORD -x $X_END -y $Y_COORD -z $Y_END
 else
-	echo "Failed to plot contact density map! Check input arguments (Genes & Coords)." 1>&2
+	echo "Failed to plot zoomed-in contact density map! Check input arguments (Genes -a -b & Coords -x -y -l)9." 1>&2
 fi
 
 #Plot viewpoint graphs of selected genes
@@ -163,7 +163,7 @@ elif [ ! -z $X_COORD ] && [ ! -z $LEN ] && [ ! -z $GENE_2 ] && [ ! -z $Y_COORD ]
 then
 	comradesFold2 -i $OUT".hyb" -a $GENE_1 -b $GENE_2 -1 $DB_1 -2 $DB_2 -x $X_COORD -y $Y_COORD -l $LEN
 else
-	echo "Error! Aborting! Check input arguments." 1>&2
+	echo "Error! Aborting Generation of Secondary Structure! Check input arguments." 1>&2
 fi
 
 echo "Analysis completed."
