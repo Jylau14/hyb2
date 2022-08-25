@@ -72,13 +72,15 @@ The following ID format is preferred to provide a more complete set of informati
 
 E.g.
 
-Downloaded from BioMart:
+Downloaded from BioMart (input fasta can be in this format):
 
 > \>ENSG00000007372.25|ENST00000638963.1|PAX6|protein_coding
 
-Formatted in the pipeline:
+After being formatted in the pipeline:
 
 > \>ENSG00000007372.25_ENST00000638963.1_PAX6_mRNA
+
+This format, using **underscore (\_)** should be used as the input command arguement when selecting genes as **pipe (|)** starts another process and cripples the command.
 
 ## Running the Program
 Hyb2 environment needs to be activated for essential softwares.
