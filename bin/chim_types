@@ -1,0 +1,30 @@
+#Types of chimera mapped
+#Strand A = 5'-3' orientation
+#Strand B = 3'-5' orientation
+#Type 1 Gapped					Type 2 Gapped
+#A	5'----------						----------3'
+#B			----------3'		5'----------
+
+#Type 3 Ungapped				Type 4 Ungapped
+#A	5'----------				5'---------------3'
+#B		----------3'				---------3'
+
+#Type 5 Ungapped				Type 6 Ungapped
+#A	5'----------------3'			5'---------------3'
+#B		--------			5'---------
+
+#Type 7 Ungapped				Type 8 Ungapped
+#A		----------3'			5'---------------3'
+#B	5'----------				5'---------------3'
+
+#Type 9 Ungapped				Type 10 Ungapped
+#A		----------3'			5'----------
+#B	5'----------------3'			5'---------------3'
+
+#Type 11 Ungapped				Type 12 Ungapped
+#A		--------			5'-------
+#B	5'----------------3'				 --------3'
+
+#Type 13 Ungapped
+#A		----------3'
+#B	5'------

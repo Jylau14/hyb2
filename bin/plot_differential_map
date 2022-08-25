@@ -1,0 +1,92 @@
+#!/bin/bash -e
+#finds significant differences between 2 sets of data
+
+#allows up to 4 datasets for each condition (a,b,c,d - condition one) (i,j,k,l - condition two) 
+#minimum 2 datasets for each condition
+
+# -m minimum reads for DESeq2, default = 2
+# -r range used to determine individual interactions, default = +/- 100, meaning each interaction would span 200nt range, a bigger range risk missing out interactions, while a smaler range risk reading one interaction as two
+# -p upper quantile limit for contrast, default 0.95
+
+#input prefix
+#plot_differential_map -a test_1_rep1 -b test_1_rep2 -i test_2_rep1 -j test_2_rep2 -m 2 -r 100 -p 0.95
+
+min=2
+range=100
+LIMIT=0.95
+
+# parsing command line options
+while getopts "a:b:c:d:i:j:k:l:m:r:p:" OPTION
+do
+        case $OPTION in
+                a) a1=$OPTARG ;;
+                b) a2=$OPTARG ;;
+                c) a3=$OPTARG ;;
+                d) a4=$OPTARG ;;
+                i) b1=$OPTARG ;;
+                j) b2=$OPTARG ;;
+                k) b3=$OPTARG ;;
+                l) b4=$OPTARG ;;
+                m) min=$OPTARG ;;
+                r) range=$OPTARG ;;
+                p) LIMIT=$OPTARG ;;
+                ?)
+
+                echo "incorrect option"
+                exit 0
+                ;;
+        esac
+done
+
+#Input file names
+A1=${a1/.entire.txt/}
+A2=${a2/.entire.txt/}
+A3=${a3/.entire.txt/}
+A4=${a4/.entire.txt/}
+B1=${b1/.entire.txt/}
+B2=${b2/.entire.txt/}
+B3=${b3/.entire.txt/}
+B4=${b4/.entire.txt/}
+
+#Prepare input tables for DESeq2
+for f in $a1 $a2 $a3 $a4 $b1 $b2 $b3 $b4 ; do
+a=${f/.entire.txt/}
+sort -k3,3nr $f | awk -v a=$a '!/^#/{print $1 "_" $2 "\t" a "=" $3}' > $a".forTable.txt"
+done
+echo -e '#seq_ID''\t'$A1'\t'$A2'\t'$A3'' '\t'$A4'' '\t'$B1'\t'$B2'\t'$B3' ''\t'$B4' ' | sed $'s/\t //g;s/-/_/g' > $A1"-"$B1".table.txt"
+make_hybrid_annotation_table.pl $A1".forTable.txt" $A2".forTable.txt" $A3".forTable.txt" $A4".forTable.txt" $B1".forTable.txt" $B2".forTable.txt" $B3".forTable.txt" $B4".forTable.txt" | awk 'NR>1{gsub("NA","0",$0); print $0}' >> $A1"-"$B1".table.txt"
+echo -e $A1'\t'condition_one'\n'$A2'\t'condition_one'\n'$A3'\t'condition_one'\n'$A4'\t'condition_one'\n'$B1'\t'condition_two'\n'$B2'\t'condition_two'\n'$B3'\t'condition_two'\n'$B4'\t'condition_two | sed 's/-/_/g' | awk 'NF>1' > $A1"-"$B1"_names.table"
+
+#Running DESeq2
+DESeq_run.R $A1"-"$B1".table.txt" $A1"-"$B1"_names.table" $min
+
+#Reformat DESeq output for plotting differential coverage map
+val1=$(awk 'FNR==1{print $2}' $A1"-"$B1".table.txt")
+val2=$(awk 'FNR==1{print $3}' $A1"-"$B1".table.txt")
+val3=$(awk 'FNR==1{print $4}' $A1"-"$B1".table.txt")
+val4=$(awk 'FNR==1{print $5}' $A1"-"$B1".table.txt")
+val5=$(awk 'FNR==1{print $6}' $A1"-"$B1".table.txt")
+val6=$(awk 'FNR==1{print $7}' $A1"-"$B1".table.txt")
+val7=$(awk 'FNR==1{print $8}' $A1"-"$B1".table.txt")
+val8=$(awk 'FNR==1{print $9}' $A1"-"$B1".table.txt")
+cat "DESeq_"$A1"-"$B1".txx" | sed "s/\"//g" | awk 'NR>1{print $1 "\tbaseMean=" $2 ";log2FoldChange=" $3 ";lfcSE=" $4 ";stat=" $5 ";pvalue=" $6 ";padj=" $7}' > $A1"-"$B1".tmp1"
+cat $A1"-"$B1".table.txt" | awk -v v1=$val1 -v v2=$val2 -v v3=$val3 -v v4=$val4 -v v5=$val5 -v v6=$val6 -v v7=$val7 -v v8=$val8 'NR>1{print $1 "\t"v1"=" $2 ";"v2"=" $3 ";"v3"=" $4 ";"v4"=" $5 ";"v5"=" $6 ";"v6"=" $7 ";"v7"=" $8 ";"v8"=" $9}' > $A1"-"$B1".tmp2"
+
+#Final DESeq output
+make_hybrid_annotation_table.pl $A1"-"$B1".tmp2" $A1"-"$B1".tmp1" | awk '{print $NF"\t"$0}' | sort -g | awk '$1!="NA" && ($1=="padj" || $1<0.05)' | cut -f2- > "DESeq_"$A1"-"$B1"_significant.txx"
+rm $A1"-"$B1".tmp1" $A1"-"$B1".tmp2"
+last_field=$(awk 'NR==1{print NF}' "DESeq_"$A1"-"$B1"_significant.txx")
+cat "DESeq_"$A1"-"$B1"_significant.txx" | awk -v last=$last_field '$(last-4)<0{print $1 "\t" log($last)/log(10)"\t"$(last-4)"\t"$last}$(last-4)>0{printf "%s\t%f\t", $1, -1*(log($last)/log(10)); print $(last-4)"\t"$last}' | awk 'NR>1' | tr "_" "\t" | sed '1s/^/x\ty\tlogpadj\tlog2FoldChange\tpadj\n/' > "DESeq_"$A1"-"$B1"_significant.padj_heatmap.txt"
+
+#Plot differential coverage map
+differential_coverage_map.R "DESeq_"$A1"-"$B1"_significant.padj_heatmap.txt" $A1 $B1
+
+#Split coverage map coordinates into individual interactions
+DESeq_interaction_split_select.py $A1"-"$B1 $range
+sed -i $'s/0\t0\t0.0\t0.0/x\ty\tlog2FoldChange\tpadj/g' $A1"-"$B1*enrichment.txt
+
+#Plot top 10 (lowest padj) zoomed-in coverage density map of the differential interactions
+for f in $A1"-"$B1*enrichment.txt; do awk 'NR>1{print $1-150"\t"$1+150"\t"$2-150"\t"$2+150"\t"$3"\t"$4}' $f | sed '1s/^/x1\tx2\ty1\ty2\tlog2FoldChange\tpadj\n/;s/-.[0-9]\+\t/1\t/;s|\t\t|\t-|g' > ${f/.txt/.heatmap.txt}; done
+
+for f in $A1"-"$B1*enrichment.heatmap.txt; do awk 'NR<12' $f | while read x1 x2 y1 y2 z; do contact_density_map_zoom.R $x1 $x2 $y1 $y2 $LIMIT $A1 $A2 $A3 $A4 $B1 $B2 $B3 $B4; done; done
+

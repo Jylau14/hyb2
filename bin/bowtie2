@@ -1,0 +1,12 @@
+#!/bin/bash
+# Wrapper script to run bowtie2 2.3.4.3 in a singularity container
+# Written by Hywel Dunn-Davies, 2022/05/11
+
+# Container source:
+# https://depot.galaxyproject.org/singularity/bowtie2%3A2.3.4.3--py37he860b03_1
+
+# Log the execution of this command
+/library/software/wcb_scripts/runlog.sh `realpath "$0"`
+
+# Run the program within its singularity container
+LC_ALL=C singularity run /datastore/library/software/biocontainers/containers/bowtie2/2.3.4.3/bowtie2%3A2.3.4.3--py37he860b03_1 bowtie2 "$@"

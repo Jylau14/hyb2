@@ -1,0 +1,48 @@
+#!/bin/bash
+#comradesScore used to calculate basepair scores for qsub (on computer cluster) comradesFold (randomized parallel RNA folding) structures
+#after qsub comradesFold -c *_folding_constraints.txt -i FASTA -s 1
+#comradesScore -i *basepair_scores.txt -f comradesMakeConstraints_2 output fasta (*_1-1000.fasta)
+
+# parsing command line options
+while getopts "i:f:" OPTION
+do
+        case $OPTION in
+                i) IN_FILE=$OPTARG ;;
+                f) IN_FASTA=$OPTARG ;;
+                ?)
+
+                echo "incorrect option"
+                exit 0
+                ;;
+        esac
+done
+
+#Clear intermediate files
+rm *plot
+rm *aux
+rm *ext
+rm *run
+rm *_folding_conhstraints.txt[0-9]*
+rm comradesFold.o*
+rm comradesFold.e*
+
+echo "Calculating Basepair Scores..."
+
+#calculating basepair scores for all files (high -m setting to avoid capping scores at any particular value)
+WORD=$(awk 'FNR==2' $IN_FASTA | wc -m)
+LEN=$((WORD -1))
+
+ls ${IN_FASTA/"_1-"$LEN".fasta"/}*.ct | awk -v l=$LEN '{print $1 "\t"0"\t"l"\t"l}' > structure_coordinates.txt
+
+bp_score.sh $IN_FILE
+
+# calculating sums of basepair scores for each structure (=COMRADES score for entire structure)
+ls *__${IN_FASTA/"_1-"$LEN".fasta"/}*VARNA_scores.txt > all_scores.txt
+cat all_scores.txt | while read line ; do echo -ne $line "\t" ; sum $line ; done > all_names_scores.txt
+echo Top scoring structures:
+cat all_names_scores.txt | sort -k2,2nr | head
+
+# display structure in VARNA:
+cat all_names_scores.txt | sort -k2,2nr | head -n1 | while read name score; do vname=${name#*__} ; cat ${vname/.VARNA_scores.txt/.vienna}; echo Open ${vname/.VARNA_scores.txt/.vienna} in VARNA; done
+cat all_names_scores.txt | sort -k2,2nr | head -n1 | while read name score; do awk '{print log($1)/log(2)}' $name | sed 's/-inf/0/g;s/^-.*/0/g' > ${name/_scores.txt/_log2scores.txt} ; echo Load ${name/_scores.txt/_log2scores.txt} as colour coding score in VARNA ; done
+

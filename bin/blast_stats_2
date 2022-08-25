@@ -1,0 +1,22 @@
+#!/usr/bin/awk -f
+#changes from blast_stats: now prints last field of gene name flexibly
+BEGIN{
+        print "biotype\tcollapsed\tall"
+}
+
+{
+	split($1,cnt,"_")
+	n=split($2,a,"|")
+	nm=split(a[n],b,"_")
+	name=b[nm]
+	comp[name]++
+	dec[name]+=cnt[2]
+}
+
+END{
+        sort = "sort -k 2nr"
+	for (i in comp){
+		print i "\t" comp[i] "\t" dec[i] | sort
+	}
+}
+

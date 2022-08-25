@@ -1,0 +1,3 @@
+#!/bin/bash
+#remove duplicates
+awk '!seen[$1] {print}; {++seen[$1]}' $1

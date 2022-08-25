@@ -1,0 +1,35 @@
+#!/usr/bin/awk -f
+#changes from hybrid_stats: now prints last field of gene name flexibly
+BEGIN{
+	SORTED=0
+	print "type1:type2\tcollapsed\tall"
+}
+
+{
+	split($1,cnt,"_")
+	n=split($4,a,"|")
+	nm1=split(a[n],b,"_")
+	m=split($10,x,"|")
+	nm2=split(x[m],y,"_")
+	if (SORTED){
+		if(b[nm1] < y[nm2]){
+			name=(b[nm1] ":" y[nm2])
+		}
+		else{
+			name=(y[nm2] ":" b[nm1])
+		}
+	}
+	else{
+			name=(b[nm1] ":" y[nm2])
+	}
+	comp[name]++
+	dec[name]+=cnt[2]
+}
+
+END{
+	sort = "sort -k 2nr"
+	for (i in comp){
+		print i "\t" comp[i] "\t" dec[i] | sort
+	}
+}
+
