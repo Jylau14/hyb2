@@ -17,8 +17,6 @@ done
 
 sed 's/_/-/g;s/protein-coding/mRNA/g;s/|/_/g;s/__/_unknown_/g' $DB > ${DB/.fasta/.tmp}
 awk '{if(NR==1) {print $0} else {if($0 ~ /^>/) {print "\n"$0} else {printf $0}}}' ${DB/.fasta/.tmp} > ${DB/.fasta/.tmp2}
-sed -i '/unknown/,+1 d;/pseudogene/,+1 d' ${DB/.fasta/.tmp2}
-sed '{:a;N;$!ba;s/\n/\t/g;s/>/\n>/g}' ${DB/.fasta/.tmp2} | awk 'NF {split($0,a,"_");print a[3]"\t"length($2)"\t"$0}' | sort -k1,1 -k2,2nr | sort -k1,1 -us | cut -f3,4 | tr "\t" "\n" > ${DB/.fasta/.tmp}
-awk 'NR==FNR{if (/Sequence unavailable/) for (i=-1;i<=0;i++) del[NR+i]; next} !(FNR in del)' ${DB/.fasta/.tmp} ${DB/.fasta/.tmp} > ${DB/.fasta/.hyb.fasta}
+sed '/unknown/,+1 d;/pseudogene/,+1 d' ${DB/.fasta/.tmp2} > ${DB/.fasta/.hyb.fasta}
 
 rm ${DB/.fasta/.tmp2} ${DB/.fasta/.tmp}
