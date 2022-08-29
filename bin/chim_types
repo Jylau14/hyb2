@@ -5,23 +5,23 @@
 #A	5'----------						----------3'
 #B			----------3'		5'----------
 
-#Type 3 Ungapped				Type 4 Ungapped
+#Type 3 Overlapping				Type 4 Overlapping
 #A	5'----------				5'---------------3'
 #B		----------3'				---------3'
 
-#Type 5 Ungapped				Type 6 Ungapped
+#Type 5 Overlapping				Type 6 Overlapping
 #A	5'----------------3'			5'---------------3'
 #B		--------			5'---------
 
-#Type 7 Ungapped				Type 8 Ungapped
+#Type 7 Overlapping				Type 8 Overlapping
 #A		----------3'			5'---------------3'
 #B	5'----------				5'---------------3'
 
-#Type 9 Ungapped				Type 10 Ungapped
+#Type 9 Overlapping				Type 10 Overlapping
 #A		----------3'			5'----------
 #B	5'----------------3'			5'---------------3'
 
-#Type 11 Ungapped				Type 12 Ungapped
+#Type 11 Overlapping				Type 12 Ungapped
 #A		--------			5'-------
 #B	5'----------------3'				 --------3'
 
