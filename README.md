@@ -33,7 +33,7 @@ If Miniconda not installed, read:
 Hyb2 can be downloaded **into bin** from GitHub with:
 
 ```
-wget https://https://github.com/Jylau14/hyb2/archive/master.zip
+wget https://github.com/Jylau14/hyb2/archive/main.zip
 unzip master.zip
 mv hyb2-master/ hyb2/
 
@@ -54,9 +54,9 @@ conda env create -f hyb2.yml
 ```
 
 ## Getting Started
-To run the program, the first thing to have is the sequence alignment map (SAM) file. 
+To run the program, the first thing to have is the sequence alignment map (SAM) file or a fastq file. 
 
-If the fasta or fastq files from RNA proximity ligation experiments are not mapped to reference sequences, this program contain a function to generate a SAM file using bowtie2.
+If the fastq files from RNA proximity ligation experiments are not mapped to reference sequences, this program contain a function to generate a SAM file using bowtie2.
 
 The second file needed will contain the reference fasta sequences.
 
@@ -80,6 +80,9 @@ After being formatted in the pipeline:
 
 > \>ENSG00000007372.25_ENST00000638963.1_PAX6_mRNA
 
+Or see:
+> https://github.com/Jylau14/hyb2/blob/main/data/Zika_18S_formatted.fasta
+
 This format, using **underscore (\_)** should be used as the input command arguement when selecting genes as **pipe (|)** starts another process and cripples the command.
 
 ## Running the Program
@@ -93,7 +96,7 @@ conda activate hyb2
 To get familiar with the command line arguements, it could be broadly explained in 3 parts:
 
 ### Converting Input to Hyb Format
--i input_file (fasta/fastq/sam)
+-i input_file (fastq/sam)
 
 -1 reference_sequences.fasta used for mapping
 
@@ -125,26 +128,26 @@ To get familiar with the command line arguements, it could be broadly explained 
 ### Analysis of short-range intramolecular interactions:
 RNA Structure Folding from 1001-1500nt positions of Zika virus (ZIKV).
 ```
-hyb2_analyse -i testData.fasta/fastq/sam -1 ZIKV.fasta -o test_1 -a ENSG_ENST_ZIKV-PE243-2015_virusRNA -x 1001 -l 500
+hyb2_analyse -i testData.fastq/sam -1 Zika_18S.fasta -o test_1 -a ZIKV-PE243-2015_virusRNA -x 1001 -l 500
 ```
 ### Analysis of long-range intramolecular interactions:
 RNA Structure Folding of 1001-1500nt positions with 5001-5500nt positions of ZIKV.
 ```
-hyb2_analyse -i testData.fasta/fastq/sam -1 ZIKV.fasta -o test_2 -a ENSG_ENST_ZIKV-PE243-2015_virusRNA -x 1001 -y 5001 -l 500
+hyb2_analyse -i testData.fastq/sam -1 Zika_18S.fasta -o test_2 -a ZIKV-PE243-2015_virusRNA -x 1001 -y 5001 -l 500
 ```
 ### Analysis of intermolecular interactions:
 RNA Structure Folding of 7501-8000nt positions of ZIKV with 501-550nt positions of 18S rRNA.
 ```
-hyb2_analyse -i testData.fasta/fastq/sam -1 ZIKV.fasta -2 18S.fasta -o test_3 -a ENSG_ENST_ZIKV-PE243-2015_virusRNA -b ENSG_NR003286-4_RNA18SN5_rRNA -x 7501 -y 501 -l 500
+hyb2_analyse -i testData.fastq/sam -1 Zika_18S.fasta -2 18S.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500
 ```
 Or if reference sequences are contained in the same file:
 ```
-hyb2_analyse -i testData.fasta/fastq/sam -1 ZIKV_and_18S.fasta -o test_3 -a ENSG_ENST_ZIKV-PE243-2015_virusRNA -b ENSG_NR003286-4_RNA18SN5_rRNA -x 7501 -y 501 -l 500
+hyb2_analyse -i testData.fastq/sam -1 Zika_18S.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500
 ```
 ### Analysis of homodimer interactions:
 RNA Structure Folding of 3501-3700nt positions of ZIKV with 3501-3700nt positions of a second strand of ZIKV.
 ```
-hyb2_analyse -i testData.fasta/fastq/sam -1 ZIKV.fasta -o test_4 -a ENSG_ENST_ZIKV-PE243-2015_virusRNA -b ENSG_ENST_ZIKV-PE243-2015_virusRNA -x 3501 -y 3501 -l 200
+hyb2_analyse -i testData.fastq/sam -1 Zika_18S.fasta -o test_4 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 3501 -y 3501 -l 200
 ```
 ## 
 ### Randomized Parallel RNA Structure Folding
@@ -152,9 +155,9 @@ To perform randomized parellel RNA structure folding, which folds the RNA 1,000 
 
 Taking the analysis of intermolecular interactions as an example:
 ```
-qsub comradesFold -c test_3_ENSG_ENST_ZIKV-PE243-2015_virusRNA-7501-8000_ENSG_NR003286-4_RNA18SN5_rRNA-501-1000.1-1100_folding_constraints.txt -i ENSG_ENST_ZIKV-PE243-2015_virusRNA-7501-8000_ENSG_NR003286-4_RNA18SN5_rRNA-501-1000_1-1100.fasta -s 1
+qsub comradesFold -c test_3_ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_rRNA-501-1000.1-1100_folding_constraints.txt -i ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_rRNA-501-1000_1-1100.fasta -s 1
 
-comradesScore -i test_3_ENSG_ENST_ZIKV-PE243-2015_virusRNA-7501-8000_ENSG_NR003286-4_RNA18SN5_rRNA-501-1000.basepair_scores.txt -f ENSG_ENST_ZIKV-PE243-2015_virusRNA-7501-8000_ENSG_NR003286-4_RNA18SN5_rRNA-501-1000_1-1100.fasta 
+comradesScore -i test_3_ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_rRNA-501-1000.basepair_scores.txt -f ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_rRNA-501-1000_1-1100.fasta 
 ```
 ## 
 ### Differential Coverage Map
@@ -186,6 +189,7 @@ Columns 10–15: Mapping information for second fragment of read.
 Column 16: Overlap Score
 
 Column 17: **Type of Chimera** (See chim_types for a visualization of the types of chimera)
+> https://github.com/Jylau14/hyb2/blob/main/bin/chim_types
 
 ### Contact Density Maps
 <p align="middle">
