@@ -34,8 +34,8 @@ Hyb2 can be downloaded **into bin** from GitHub with:
 
 ```
 wget https://github.com/Jylau14/hyb2/archive/main.zip
-unzip master.zip
-mv hyb2-master/ hyb2/
+unzip main.zip
+mv hyb2-main/ hyb2/
 
 # or clone using git:
 git clone https://github.com/Jylau14/hyb2.git
