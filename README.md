@@ -128,26 +128,26 @@ To get familiar with the command line arguements, it could be broadly explained 
 ### Analysis of short-range intramolecular interactions:
 RNA Structure Folding from 1001-1500nt positions of Zika virus (ZIKV).
 ```
-hyb2_analyse -i testData.fastq/sam -1 Zika_18S.fasta -o test_1 -a ZIKV-PE243-2015_virusRNA -x 1001 -l 500
+hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o test_1 -a ZIKV-PE243-2015_virusRNA -x 1001 -l 500
 ```
 ### Analysis of long-range intramolecular interactions:
 RNA Structure Folding of 1001-1500nt positions with 5001-5500nt positions of ZIKV.
 ```
-hyb2_analyse -i testData.fastq/sam -1 Zika_18S.fasta -o test_2 -a ZIKV-PE243-2015_virusRNA -x 1001 -y 5001 -l 500
+hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o test_2 -a ZIKV-PE243-2015_virusRNA -x 1001 -y 5001 -l 500
 ```
 ### Analysis of intermolecular interactions:
 RNA Structure Folding of 7501-8000nt positions of ZIKV with 501-550nt positions of 18S rRNA.
 ```
-hyb2_analyse -i testData.fastq/sam -1 Zika_18S.fasta -2 18S.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500
+hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -2 18S.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500
 ```
 Or if reference sequences are contained in the same file:
 ```
-hyb2_analyse -i testData.fastq/sam -1 Zika_18S.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500
+hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500
 ```
 ### Analysis of homodimer interactions:
 RNA Structure Folding of 3501-3700nt positions of ZIKV with 3501-3700nt positions of a second strand of ZIKV.
 ```
-hyb2_analyse -i testData.fastq/sam -1 Zika_18S.fasta -o test_4 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 3501 -y 3501 -l 200
+hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o test_4 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 3501 -y 3501 -l 200
 ```
 ## 
 ### Randomized Parallel RNA Structure Folding
