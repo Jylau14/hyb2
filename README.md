@@ -54,6 +54,10 @@ conda env create -f hyb2.yml
 ```
 
 ## Getting Started
+To run hyb2 using a fastq/sam input file, type in the command line:
+```
+hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o run_1 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500
+```
 To run the program, the first thing to have is the sequence alignment map (SAM) file or a fastq file. 
 
 If the fastq files from RNA proximity ligation experiments are not mapped to reference sequences, this program contain a function to generate a SAM file using bowtie2.
