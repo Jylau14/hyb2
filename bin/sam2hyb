@@ -57,7 +57,7 @@ hyb2fasta_bits_allRNAs.awk ${DB/fasta/tab} $OUT"_hybrids_ua.hyb"
 hybrid-min $OUT"_hybrids_ua.bit_1.fasta" $OUT"_hybrids_ua.bit_2.fasta" 2>&1 > /dev/null
 Ct2B_GK_3.pl $OUT"_hybrids_ua.bit_1.fasta-"$OUT"_hybrids_ua.bit_2.fasta.ct" > $OUT"_hybrids_ua.vienna"
 add_dG_hyb.pl $OUT"_hybrids_ua.hyb" $OUT"_hybrids_ua.vienna" > $OUT"_hybrids_ua_dg.hyb"
-collapse_hyb.sh $OUT"_hybrids_ua_dg.hyb" | filter_homopolymers_2.awk | hyb_mapped_position_overlaps_3.awk | hyb_chim_types.awk > $OUT".hyb"
+collapse_hyb.sh $OUT"_hybrids_ua_dg.hyb" | filter_homopolymers.awk | hyb_mapped_position_overlaps_3.awk | hyb_chim_types.awk > $OUT".hyb"
 awk '$16>=5' $OUT".hyb" > $OUT"_homodimers.hyb"
 make_nicer_vienna_hOH5.awk $OUT"_hybrids_ua.vienna" > $OUT"_hybrids_ua.viennad"
 hybrid_stats $OUT".hyb" > $OUT"_hybrids.hyb_stats.txt"
