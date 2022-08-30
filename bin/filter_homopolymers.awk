@@ -18,9 +18,11 @@ NR==1{
 	regex=(A "|" C "|" G "|" T  "|" a  "|" c  "|" g  "|" t)
 }
 
-{if(match($0,regex) || $4!~$10)
-	print $0"\t" "."
-else
+match($0,regex){
+	next
+}
+
+{
 	print $0
 }
 
