@@ -2,13 +2,13 @@
 
 BEGIN{ OFS="\t" }
 
-$4==$10 && $16!="."{
+$4==$10{
 	ovlp=overlap( $7, $8, $13, $14)
 	print $0 "\t" ovlp
 }
 
-$16=="."{
-	print $0
+$4!=$10{
+	print $0 "\t" "."
 }
 
 function min(a, b){
