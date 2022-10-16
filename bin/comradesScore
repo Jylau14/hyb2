@@ -43,6 +43,6 @@ echo Top scoring structures:
 cat all_names_scores.txt | sort -k2,2nr | head
 
 # display structure in VARNA:
-cat all_names_scores.txt | sort -k2,2nr | head -n1 | while read name score; do vname=${name#*__} ; cat ${vname/.VARNA_scores.txt/.vienna}; echo Open ${vname/.VARNA_scores.txt/.vienna} in VARNA; done
+cat all_names_scores.txt | sort -k2,2nr | head -n1 | while read name score; do vname=${name##*__} ; cat ${vname/.VARNA_scores.txt/.vienna}; echo Open ${vname/.VARNA_scores.txt/.vienna} in VARNA; done
 cat all_names_scores.txt | sort -k2,2nr | head -n1 | while read name score; do awk '{print log($1)/log(2)}' $name | sed 's/-inf/0/g;s/^-.*/0/g' > ${name/_scores.txt/_log2scores.txt} ; echo Load ${name/_scores.txt/_log2scores.txt} as colour coding score in VARNA ; done
 
