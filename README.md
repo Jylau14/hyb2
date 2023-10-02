@@ -6,7 +6,11 @@ A ***streamlined*** program for analyzing proximity ligation experiments from ma
 2. Plot contact density map of selected genes and viewpoint graphs, 
 3. Generate intra-/intermolecular RNA structure of any selected regions.
 
-Additionally, plot differential coverage map between experiments.
+Additionally, plot differences and similarities between experiments.
+
+<p align="center">
+  <img src="https://github.com/Jylau14/hyb2/assets/110675091/7121ebda-6b16-444c-b07c-483ee595adb7" height="500" width="700">
+</p>
 
 ## Introduction
 RNA adopts ensemble of structures essential for life such as splicing, gene expression, and virus replication. 
@@ -171,7 +175,7 @@ Up to 4 replicates for each experiment can be used as input, with a minimum of 2
 
 For example, to identify the differences between control and experimental conditions:
 ```
-plot_differential_map -a control_rep1 -b control_rep2 -c control_rep3 -d control_rep4 -i exp_rep1 -j exp_rep2 -k exp_rep3 -l exp_rep4
+hyb2_compare -a control_rep1 -b control_rep2 -c control_rep3 -d control_rep4 -i exp_rep1 -j exp_rep2 -k exp_rep3 -l exp_rep4
 ```
 
 ## How To Read Outputs
@@ -236,14 +240,15 @@ The structures are colour coded based on log2 of supporting reads, with red bein
 
 (VARNA instructions)
 
-### Differential Coverage Maps
-<img src="https://user-images.githubusercontent.com/110675091/185672933-0846b05c-943f-4e22-b341-97f5df3efc96.png" align="right" height="400" width="400">
+### Differential Coverage Maps & Similarity Heatmap
+<p align="center">
+  <img src="https://github.com/Jylau14/hyb2/assets/110675091/a7b32e9d-4a4e-46c5-a141-d4df142bc9a1" height="300" width="600">
+</p>
 
 Read similarly to **Contact Density Maps**.
 
-However, it is plotted in two colours, with red being interactions enriched in one condition and blue for the other.
+However, differential coverage maps are plotted in two colours, with red being interactions enriched in one condition and blue for the other.
 
 Also, instead of the contrast reflecting chimeric counts, here, it represents significance (p-value) for significanyly differential interactions.
 
-
-
+Similarity heatmaps plot the conserved interactions between datasets.
