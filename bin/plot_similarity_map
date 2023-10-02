@@ -1,0 +1,41 @@
+#!/bin/bash -e
+
+#locate overlapping coordinates and print the minimum value
+
+# parsing command line options
+while getopts "a:b:c:d:i:j:k:l:p:" OPTION
+do
+        case $OPTION in
+                a) a1=$OPTARG ;;
+                b) a2=$OPTARG ;;
+                c) a3=$OPTARG ;;
+                d) a4=$OPTARG ;;
+                i) b1=$OPTARG ;;
+                j) b2=$OPTARG ;;
+                k) b3=$OPTARG ;;
+                l) b4=$OPTARG ;;
+                p) LIMIT=$OPTARG ;;
+                ?)
+
+                echo "incorrect option"
+                exit 0
+                ;;
+        esac
+done
+
+#Input file names
+A1=${a1/.entire.txt/}
+A2=${a2/.entire.txt/}
+A3=${a3/.entire.txt/}
+A4=${a4/.entire.txt/}
+B1=${b1/.entire.txt/}
+B2=${b2/.entire.txt/}
+B3=${b3/.entire.txt/}
+B4=${b4/.entire.txt/}
+
+cat $a1 $a2 $a3 $a4 $b1 $b2 $b3 $b4 > $A1"-"$B1".merge.txt"
+
+awk 'n=x[$1,$2]{print n"\n"$0;} {x[$1,$2]=$0;}' $A1"-"$B1".merge.txt" | awk 'ORS=NR%2?FS:RS' | awk '{if (FNR==1) print $1"\t"$4"\t"$5"\t"$6; if (FNR>1 && $3<=$6) print $1"\t"$2"\t"$3; if (FNR>1 && $3>$6) print $4"\t"$5"\t"$6}' | awk 'FNR>2 && $0~/[a-z]/ || FNR>2 && $0~/[A-Z]/ {next} {print}' > $A1"-"$B1".entire.txt"
+
+similarity_heatmap.R $A1"-"$B1".entire.txt" $LIMIT
+
