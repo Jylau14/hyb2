@@ -13,7 +13,7 @@ colnames(data) <- c('Nucleotide_position', 'Chimera_count')
 
 # plot bar chart
 vp <- ggplot(data, aes(x=Nucleotide_position, y=Chimera_count))+
-  geom_bar(stat="identity", color="red")+
+  geom_bar(stat="identity", color="grey")+
   theme_bw()+
   scale_x_continuous(expand = c(0, 0))+
   labs(title = (gsub(pattern="\\.gplot$","_viewpoint",INPUT)))+

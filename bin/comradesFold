@@ -52,7 +52,7 @@ rm -f $ACCEPTED_CONSTRAINTS $CURRENT_CONSTRAINTS
 
 # chosing shuffling option
 if [ "$SHUFFLING" = "1" ]; then
-        shuf $IN_CONSTRAINTS > $SHUFFLED_CONSTRAINTS
+        sort -R $IN_CONSTRAINTS > $SHUFFLED_CONSTRAINTS
 else
         cp $IN_CONSTRAINTS $SHUFFLED_CONSTRAINTS
 fi
