@@ -1,7 +1,7 @@
 # Hyb2
 ***Generates RNA structures of short- and long-range intra/intermolecular interactions, and homodimers.***
 
-A ***streamlined*** program for analyzing proximity ligation experiments from mapped files in the SAM format to: 
+A ***streamlined*** program for analyzing proximity ligation experiments from mapped files in the fastq/SAM format to: 
 1. Generate a list of chimeric interactions with their coordinates, sequence, and folding energy, 
 2. Plot contact density map of selected genes and viewpoint graphs, 
 3. Generate intra-/intermolecular RNA structure of any selected regions.
