@@ -168,14 +168,18 @@ qsub comradesFold -c test_3_ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18S
 comradesScore -i test_3_ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_rRNA-501-1000.basepair_scores.txt -f ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_rRNA-501-1000_1-1100.fasta 
 ```
 ## 
-### Differential Coverage Map
+### Differential Coverage Map and Similarity Heatmap
 To compare between 2 different proximity ligation experiments, the program incorporates DESeq2 to identify the differential chimeras, and produces a differential coverage map.
+
+To find the conservations between 2 experiments, we look for overlapping interactions.
 
 Up to 4 replicates for each experiment can be used as input, with a minimum of 2.
 
-For example, to identify the differences between control and experimental conditions:
+The input files for hyb2_compare comes from outputs of the main hyb2 pipeline (*entire.txt).
+
+For example, to identify the differences and similarities between control and experimental conditions:
 ```
-hyb2_compare -a control_rep1 -b control_rep2 -c control_rep3 -d control_rep4 -i exp_rep1 -j exp_rep2 -k exp_rep3 -l exp_rep4
+hyb2_compare -a control_rep1.entire.txt -b control_rep2.entire.txt -c control_rep3.entire.txt -d control_rep4.entire.txt -i exp_rep1.entire.txt -j exp_rep2.entire.txt -k exp_rep3.entire.txt -l exp_rep4.entire.txt
 ```
 
 ## How To Read Outputs
