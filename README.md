@@ -175,7 +175,7 @@ To find the conservations between 2 experiments, we look for overlapping interac
 
 Up to 4 replicates for each experiment can be used as input, with a minimum of 2.
 
-The input files for hyb2_compare comes from outputs of the main hyb2 pipeline (*entire.txt).
+The input files for **hyb2_compare** comes from outputs of the main hyb2 pipeline **(*entire.txt)**.
 
 For example, to identify the differences and similarities between control and experimental conditions:
 ```
