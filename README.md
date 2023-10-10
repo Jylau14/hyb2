@@ -126,9 +126,9 @@ To get familiar with the command line arguements, it could be broadly explained 
 -q upperlimit_for_heatmap_chimeric_count (default value: 0.95 (%) )
 
 ### RNA Structure Folding
--x start_coord_of_1st_gene
+-x start_coord_of_1st_gene (cannot be longer than nucleotide length of 1st gene)
 
--y start_coord_of_2nd_gene
+-y start_coord_of_2nd_gene (cannot be longer than nucleotide length of 2nd gene)
 
 -l lengths_of_fragments
 
