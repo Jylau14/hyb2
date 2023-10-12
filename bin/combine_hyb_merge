@@ -26,7 +26,6 @@
 
 use warnings;
 use strict;
-use lib '/homes/tollervey/lib';
 use Hybrid_long_2;
 my @all_hits;
 my %HoA_ref_hits;
