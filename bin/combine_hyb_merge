@@ -26,6 +26,7 @@
 
 use warnings;
 use strict;
+use lib '~/bin';
 use Hybrid_long_2;
 my @all_hits;
 my %HoA_ref_hits;
