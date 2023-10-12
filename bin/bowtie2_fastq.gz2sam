@@ -1,0 +1,31 @@
+#!/bin/bash -e
+#align sequences using bowtie2 and outputs SAM format
+#sam2hyb -i 45391.sam -d ~/Virus_Structure/ZIKV_Align/Genome_Filled/db/ZBRA/ZBRA_Filled.fasta -o test_sam2hyb
+
+# parsing command line options
+while getopts "i:d:" OPTION
+do
+     case $OPTION in
+         i) IN_FILE=$OPTARG ;;
+         d) DB=$OPTARG ;;
+	 ?) 
+
+             echo "incorrect option"
+             exit 0
+             ;;
+     esac
+done
+
+if [ ! -e ${DB/fasta/tab} ]
+then
+        echo "Making database..."
+        make_hyb_db $DB
+fi
+
+gunzip $IN_FILE
+solexa2fasta.awk ${IN_FILE/.gz/} | fasta2tab.awk > ${IN_FILE/fastq.gz/tab}
+make_comp_fasta.pl ${IN_FILE/fastq.gz/tab} > ${IN_FILE/.fastq.gz/_comp.fasta}
+
+echo "Bowtie2 Mapping..."
+bowtie2 -D 20 -R 3 -N 0 -L 16 -k 20 --local -i S,1,0.50 --score-min L,18,0 --ma 1 --np 0 --mp 2,2 --rdg 5,1 --rfg 5,1 -p 64 -x ${DB/.fasta/} -f ${IN_FILE/.fastq.gz/_comp.fasta} > ${IN_FILE/fastq.gz/sam} 2> ${IN_FILE/fastq.gz/blast.err}
+echo "Mapping Concluded"
