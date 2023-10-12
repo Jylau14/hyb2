@@ -14,7 +14,7 @@
 
 use warnings;
 use strict;
-use lib '~/bin/';
+use lib '~/hyb2/bin';
 use Hybrid_long;
 my %rank;
 my $previous_ID = '';
