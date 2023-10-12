@@ -45,6 +45,11 @@ do
      esac
 done
 
+if (( $OPTIND == 1 )); then
+     echo "No options selected"
+     exit 0
+fi
+
 #Step1 --------------------------------------------------------------------------------------------------------------------------------------------------
 #Process SAM files to Hyb format
 
