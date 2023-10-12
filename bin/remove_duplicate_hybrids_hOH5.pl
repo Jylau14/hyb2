@@ -14,6 +14,7 @@
 
 use warnings;
 use strict;
+use lib '~/bin/';
 use Hybrid_long;
 my %rank;
 my $previous_ID = '';
