@@ -14,7 +14,6 @@
 
 use warnings;
 use strict;
-use lib '/homes/gkudla/bin';
 use Hybrid_long;
 my %rank;
 my $previous_ID = '';
