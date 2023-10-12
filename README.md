@@ -34,7 +34,7 @@ If Miniconda not installed, read:
 > https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html
 
 ## Installation
-Hyb2 can be downloaded **into bin** from GitHub with:
+Hyb2 can be downloaded **into bin** from GitHub (with UNAFold package included) with:
 
 ```
 wget https://github.com/Jylau14/hyb2/archive/main.zip
@@ -49,6 +49,7 @@ Add installation location to your PATH:
 
 ```
 export PATH=hyb2/bin:$PATH
+export PATH=hyb2/unafold/bin:$PATH
 ```
 
 Create hyb2 environment on conda:
