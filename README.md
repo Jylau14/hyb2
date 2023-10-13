@@ -33,6 +33,15 @@ If Miniconda not installed, read:
 
 > https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html
 
+blast and bowtie2, if not installed:
+
+```
+wget https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.14.1+-x64-linux.tar.gz
+tar -zxf ncbi-blast-2.14.1+-x64-linux.tar.gz
+
+wget https://github.com/BenLangmead/bowtie2/releases/download/v2.3.4.3/bowtie2-2.3.4.3-linux-x86_64.zip
+unzip bowtie2-2.3.4.3-linux-x86_64.zip
+```
 ## Installation
 Hyb2 can be downloaded **into bin** from GitHub (with UNAFold package included) with:
 
