@@ -45,7 +45,7 @@ blast_stats_2 $OUT"_singleE.blast" > $OUT"_singleE.blast_stats.txt"
 get_mtop_hybrids.pl BLAST_THRESHOLD=$hval MODE=2 MAX_OVERLAP=$gmax MAX_HITS_PER_SEQUENCE=$hmax OUTPUT_FORMAT=HYB $OUT".blast" > $OUT"_TEMP_FILE1_TXT"
 getseqs_sam $OUT"_TEMP_FILE1_TXT" ${SAM/.sam/.filt.sam} > $OUT"_hybrids.fasta" 
 txt2hyb.awk $OUT"_hybrids.fasta" $OUT"_TEMP_FILE1_TXT" > $OUT"_hybrids.hyb"
-remove_duplicate_hybrids_hOH5.pl PREFER_MIM=1 $OUT"_mtophits.ref" $OUT"_hybrids.hyb" > $OUT"_hybrids_ua.hyb"
+remove_duplicate_hybrids_hOH5_2.pl PREFER_MIM=1 $OUT"_mtophits.ref" $OUT"_hybrids.hyb" > $OUT"_hybrids_ua.hyb"
 
 #Create database using input fasta file, calculate folding energy for each entry in hyb file, and collapse same sequence reads
 if [ ! -e ${DB/fasta/tab} ]
@@ -60,7 +60,7 @@ add_dG_hyb.pl $OUT"_hybrids_ua.hyb" $OUT"_hybrids_ua.vienna" > $OUT"_hybrids_ua_
 collapse_hyb.sh $OUT"_hybrids_ua_dg.hyb" | filter_homopolymers.awk | hyb_mapped_position_overlaps_3.awk | hyb_chim_types.awk > $OUT".hyb"
 awk '$16>=5' $OUT".hyb" > $OUT"_homodimers.hyb"
 make_nicer_vienna_hOH5.awk $OUT"_hybrids_ua.vienna" > $OUT"_hybrids_ua.viennad"
-hybrid_stats_2 $OUT".hyb" > $OUT"_hybrids.hyb_stats.txt"
+hybrid_stats $OUT".hyb" > $OUT"_hybrids.hyb_stats.txt"
 
 echo "Converted to hyb format."
 
