@@ -1,4 +1,5 @@
 #!/bin/bash -e
+
 #hyb2
 #takes aligned proximity ligation reads from different mapping tools in the SAM format to be processed in the hyb pipeline
 #generates a list of chimeric interactions with their coordinates, sequence, and folding energy
@@ -6,14 +7,14 @@
 #generates intra-/intermolecular RNA structure of any selected regions
 
 #hyb2 split into 3 steps
-#processing SAM file -i input_SAM_file -1 fasta_file_used_for_mapping -2 -o Output_ID -v BLAST_THRESHOLD -m MAX_OVERLAP -h MAX_HITS_PER_SEQUENCE
-#heatmap 2nd_fasta_file_if_different_from_1st -a GENE_ID_of_interest -b 2nd_GENE_ID_of interest_if_different -q Upperlimit%_for_heatmap_chimeric_count
-#RNA folding -x START_COORD_of_1st_strand/gene -y START_COORD_of_2nd_strand/gene -l length_of_fragments
+#processing SAM file -i input_SAM_file -1 fasta_file_used_for_mapping -2 -o Output_ID -v BLAST_THRESHOLD -m MAX_OVERLAP -h MAX_HITS_PER_SEQUENCE 
+#heatmap 2nd_fasta_file_if_different_from_1st -a GENE_ID_of_interest -b 2nd_GENE_ID_of interest_if_different -q Upperlimit%_for_heatmap_chimeric_count 
+#RNA folding -x START_COORD_of_1st_strand/gene -y START_COORD_of_2nd_strand/gene -l length_of_fragments -j directory_of_VARNAcmd.jar
 
 #analysis of 1 gene (ZIKV), producing a contact density map of ZIKV to ZIKV, and folding of ZIKV from 1001-1500nt
-#hyb2 -i Livefire3.STAR.Aligned.out.sam -1 ~/Virus_Structure/hybdb/GRCh38_and_Livefire/hg38_and_Zika.fasta -o test_1 -a ENSG_ENST_ZIKV-PE243-2015_virusRNA -x 1001 -l 500
+#hyb2 -i Livefire3.STAR.Aligned.out.sam -1 ~/Virus_Structure/hybdb/GRCh38_and_Livefire/hg38_and_Zika.fasta -o test_1 -a ENSG_ENST_ZIKV-PE243-2015_virusRNA -x 1001 -l 500 -j ~/bin/VARNA/build/jar/VARNAcmd.jar
 #analysis of 2 genes (ZIKV and 18S rRNA), heatmap between the 2 genes, and RNA structure between 1001-1500nt ZIKV and 101-600 18S rRNA
-#hyb2 -i Livefire2.STAR.Aligned.out.sam -1 ~/Virus_Structure/hybdb/GRCh38_and_Livefire/hg38_and_Zika.fasta -o test_2 -a ENSG_ENST_ZIKV-PE243-2015_virusRNA -b ENSG_NR003286-4_RNA18SN5_rRNA -x 1001 -y 101 -l 500
+#hyb2 -i Livefire2.STAR.Aligned.out.sam -1 ~/Virus_Structure/hybdb/GRCh38_and_Livefire/hg38_and_Zika.fasta -o test_2 -a ENSG_ENST_ZIKV-PE243-2015_virusRNA -b ENSG_NR003286-4_RNA18SN5_rRNA -x 1001 -y 101 -l 500 -j ~/bin/VARNA/build/jar/VARNAcmd.jar
 
 hval=0.1
 gmax=4
@@ -21,7 +22,7 @@ hmax=10
 LIMIT=0.95
 
 # parsing command line options
-while getopts "i:1:2:o:v:m:h:a:b:q:x:y:l:" OPTION
+while getopts "i:1:2:o:v:m:h:a:b:q:x:y:l:j:" OPTION
 do
      case $OPTION in
          i) IN_FILE=$OPTARG ;;
@@ -37,6 +38,7 @@ do
          x) X_COORD=$OPTARG ;;
          y) Y_COORD=$OPTARG ;;
          l) LEN=$OPTARG ;;
+	 j) VARNA=$OPTARG ;;
          ?)
 
              echo "incorrect option"
@@ -56,17 +58,17 @@ fi
 #Reformat reference sequence files
 if grep -qm1 '|' $DB_1
 then
-        fasta_hyb2_formatting -i $DB_1
-        DB_1=${DB_1/.fasta/.hyb.fasta}
+	fasta_hyb2_formatting -i $DB_1
+	DB_1=${DB_1/.fasta/.hyb.fasta}
 fi
 
 if [ ! -z $DB_2 ]
 then
-        if grep -qm1 '|' $DB_2
-        then
-                fasta_hyb2_formatting -i $DB_2
-                DB_2=${DB_2/.fasta/.hyb.fasta}
-        fi
+	if grep -qm1 '|' $DB_2
+	then
+		fasta_hyb2_formatting -i $DB_2
+		DB_2=${DB_2/.fasta/.hyb.fasta}
+	fi
 fi
 
 if [ -z $DB_2 ]
@@ -77,7 +79,7 @@ fi
 #If input is in fastq/gz or fasta format, convert to SAM using bowtie2
 if [ ! -f $OUT".hyb" ] && [[ "$IN_FILE"  == *fastq.gz ]]
 then
-        if bowtie2_fastq.gz2sam -i $IN_FILE -d $DB_1
+	if bowtie2_fastq.gz2sam -i $IN_FILE -d $DB_1
         then
                 echo "SAM file generated"
         else
@@ -85,100 +87,103 @@ then
         fi
 elif [ ! -f $OUT".hyb" ] && [[ "$IN_FILE"  == *fastq ]]
 then
-        if bowtie2_fastq2sam -i $IN_FILE -d $DB_1
-        then
-                echo "SAM file generated"
-        else
-                echo "Error! Aborting! Check input arguments." 1>&2
-        fi
+	if bowtie2_fastq2sam -i $IN_FILE -d $DB_1
+	then
+		echo "SAM file generated"
+	else
+		echo "Error! Aborting! Check input arguments." 1>&2
+	fi
 elif [ ! -f $OUT".hyb" ] && [[ "$IN_FILE"  == *fasta ]]
 then
-        if bowtie2_fasta2sam -i $IN_FILE -d $DB_1
-        then
-                echo "SAM file generated"
-        else
-                echo "Error! Aborting! Check input arguments." 1>&2
-        fi
+	if bowtie2_fasta2sam -i $IN_FILE -d $DB_1
+	then
+		echo "SAM file generated"
+	else
+		echo "Error! Aborting! Check input arguments." 1>&2
+	fi
 fi
 
-if [[ "$IN_FILE"  == *fastq ]]
+if [[ "$IN_FILE"  == *fastq.gz ]]
 then
-        SAM=${IN_FILE/fastq/sam}
+        SAM=${IN_FILE/fastq.gz/sam}
+elif [[ "$IN_FILE"  == *fastq ]]
+then
+	SAM=${IN_FILE/fastq/sam}
 elif [[ "$IN_FILE"  == *fasta ]]
 then
-        SAM=${IN_FILE/fasta/sam}
+	SAM=${IN_FILE/fasta/sam}
 elif [[ "$IN_FILE"  == *sam ]]
 then
-        SAM=$IN_FILE
+	SAM=$IN_FILE
 fi
 
 #Convert SAM to Hyb Format
 if [ ! -f $OUT".hyb" ]
 then
-        if sam2hyb -i $SAM -d $DB_1 -o $OUT -v $hval -g $gmax
-        then
-                echo "Hyb File Generated."
-        else
-                echo "Error! Aborting! Check input arguments." 1>&2
-        fi
+	if sam2hyb -i $SAM -d $DB_1 -o $OUT -v $hval -g $gmax
+	then
+		echo "Hyb File Generated."
+	else
+		echo "Error! Aborting! Check input arguments." 1>&2
+	fi
 else
-        echo "Hyb File Exist. Next Step."
+	echo "Hyb File Exist. Next Step."
 fi
 
 #Step2 --------------------------------------------------------------------------------------------------------------------------------------------------
 #Plot contact density map of selected genes
 if [ ! -z $GENE_1 ]
 then
-        plot_cdm -i $OUT".hyb" -q $LIMIT -a $GENE_1
+	plot_cdm -i $OUT".hyb" -q $LIMIT -a $GENE_1
 fi
 
 if [ ! -z $GENE_2 ]
 then
-        plot_cdm -i $OUT".hyb" -q $LIMIT -a $GENE_1 -b $GENE_2
+	plot_cdm -i $OUT".hyb" -q $LIMIT -a $GENE_1 -b $GENE_2
 else
-        echo "Failed to plot contact density map of second gene! Check input arguments (Gene -b)." 1>&2
+	echo "Failed to plot contact density map of second gene! Check input arguments (Gene -b)." 1>&2
 fi
 
 if [ -z $GENE_2 ] && [ -z $Y_COORD ] && [ ! -z $LEN ]
 then
-        X_END=$(($X_COORD+$LEN-1))
-        plot_cdm -i $OUT".hyb" -q $LIMIT -a $GENE_1 -w $X_COORD -x $X_END -y $X_COORD -z $X_END
+	X_END=$(($X_COORD+$LEN-1))
+	plot_cdm -i $OUT".hyb" -q $LIMIT -a $GENE_1 -w $X_COORD -x $X_END -y $X_COORD -z $X_END
 elif [ -z $GENE_2 ] && [ ! -z $Y_COORD ] && [ ! -z $LEN ]
 then
-        X_END=$(($X_COORD+$LEN-1))
-        Y_END=$(($Y_COORD+$LEN-1))
-        plot_cdm -i $OUT".hyb" -q $LIMIT -a $GENE_1 -w $X_COORD -x $X_END -y $Y_COORD -z $Y_END
+	X_END=$(($X_COORD+$LEN-1))
+	Y_END=$(($Y_COORD+$LEN-1))
+	plot_cdm -i $OUT".hyb" -q $LIMIT -a $GENE_1 -w $X_COORD -x $X_END -y $Y_COORD -z $Y_END
 elif [ ! -z $GENE_2 ] && [ ! -z $Y_COORD ] && [ ! -z $LEN ]
 then
-        X_END=$(($X_COORD+$LEN-1))
-        Y_END=$(($Y_COORD+$LEN-1))
-        plot_cdm -i $OUT".hyb" -q $LIMIT -a $GENE_1 -b $GENE_2 -w $X_COORD -x $X_END -y $Y_COORD -z $Y_END
+	X_END=$(($X_COORD+$LEN-1))
+	Y_END=$(($Y_COORD+$LEN-1))
+	plot_cdm -i $OUT".hyb" -q $LIMIT -a $GENE_1 -b $GENE_2 -w $X_COORD -x $X_END -y $Y_COORD -z $Y_END
 else
-        echo "Failed to plot zoomed-in contact density map! Check input arguments (Genes -a -b & Coords -x -y -l)." 1>&2
+	echo "Failed to plot zoomed-in contact density map! Check input arguments (Genes -a -b & Coords -x -y -l)." 1>&2
 fi
 
 #Plot viewpoint graphs of selected genes
 if [ -z $GENE_2 ]
 then
-        plot_viewpoint -i $OUT".hyb" -1 $DB_1 -2 $DB_2 -a $GENE_1
+	plot_viewpoint -i $OUT".hyb" -1 $DB_1 -2 $DB_2 -a $GENE_1
 else
-        plot_viewpoint -i $OUT".hyb" -1 $DB_1 -2 $DB_2 -a $GENE_1 -b $GENE_2
+	plot_viewpoint -i $OUT".hyb" -1 $DB_1 -2 $DB_2 -a $GENE_1 -b $GENE_2
 fi
 #Step3 --------------------------------------------------------------------------------------------------------------------------------------------------
 #Generate RNA Secondary Structure of selected strands
 if [ ! -z $X_COORD ] && [ ! -z $LEN ] && [ -z $GENE_2 ] && [ -z $Y_COORD ]
 then
-        comradesFold2 -i $OUT".hyb" -a $GENE_1 -1 $DB_1 -x $X_COORD -l $LEN
+	comradesFold2 -i $OUT".hyb" -a $GENE_1 -1 $DB_1 -x $X_COORD -l $LEN -j $VARNA
 elif [ ! -z $X_COORD ] && [ ! -z $LEN ] && [ -z $GENE_2 ] && [ ! -z $Y_COORD ]
 then
-        comradesFold2 -i $OUT".hyb" -a $GENE_1 -1 $DB_1 -x $X_COORD -y $Y_COORD -l $LEN
+	comradesFold2 -i $OUT".hyb" -a $GENE_1 -1 $DB_1 -x $X_COORD -y $Y_COORD -l $LEN -j $VARNA
 elif [ ! -z $X_COORD ] && [ ! -z $LEN ] && [ ! -z $GENE_2 ] && [ ! -z $Y_COORD ]
 then
-        comradesFold2 -i $OUT".hyb" -a $GENE_1 -b $GENE_2 -1 $DB_1 -2 $DB_2 -x $X_COORD -y $Y_COORD -l $LEN
+	comradesFold2 -i $OUT".hyb" -a $GENE_1 -b $GENE_2 -1 $DB_1 -2 $DB_2 -x $X_COORD -y $Y_COORD -l $LEN -j $VARNA
 else
-        echo "Error! Aborting Generation of Secondary Structure! Check input arguments." 1>&2
+	echo "Error! Aborting Generation of Secondary Structure! Check input arguments." 1>&2
 fi
 
 echo "Analysis completed."
-echo "To compare between different datasets and plot differential coverage map and differential interactions, use:"
-echo "plot_differential_map -a condition1_rep1.entire.txt -b condition1_rep2.entire.txt -c cond1_rep3.entire.txt -d cond1_rep4.entire.txt -i condition2_rep1.entire.txt -j cond2_rep2.entire.txt -k cond2_rep3.entire.txt -l cond2_rep4.entire.txt"
+echo "To compare between different datasets and plot differential coverage map, similarity heatmap, and differential structures, use:"
+echo "hyb2_compare -a condition1_rep1.entire.txt -b condition1_rep2.entire.txt -c cond1_rep3.entire.txt -d cond1_rep4.entire.txt -i condition2_rep1.entire.txt -j cond2_rep2.entire.txt -k cond2_rep3.entire.txt -l cond2_rep4.entire.txt -1 cond1_rep1.hyb -2 cond1_rep2.hyb -3 cond1_rep3.hyb -4 cond1_rep4.hyb -5 cond2_rep1.hyb -6 cond2_rep2.hyb -7 cond2_rep3.hyb -8 cond2_rep4.hyb -0 GENE_NAME -9 FASTA -j ~/dir_of_VARNAcmd.jar"
