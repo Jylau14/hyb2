@@ -186,4 +186,4 @@ fi
 
 echo "Analysis completed."
 echo "To compare between different datasets and plot differential coverage map, similarity heatmap, and differential structures, use:"
-echo "hyb2_compare -a condition1_rep1.entire.txt -b condition1_rep2.entire.txt -c cond1_rep3.entire.txt -d cond1_rep4.entire.txt -i condition2_rep1.entire.txt -j cond2_rep2.entire.txt -k cond2_rep3.entire.txt -l cond2_rep4.entire.txt -1 cond1_rep1.hyb -2 cond1_rep2.hyb -3 cond1_rep3.hyb -4 cond1_rep4.hyb -5 cond2_rep1.hyb -6 cond2_rep2.hyb -7 cond2_rep3.hyb -8 cond2_rep4.hyb -0 GENE_NAME -9 FASTA -j ~/dir_of_VARNAcmd.jar"
+echo "hyb2_compare -a condition1_rep1.entire.txt -b condition1_rep2.entire.txt -c cond1_rep3.entire.txt -d cond1_rep4.entire.txt -i condition2_rep1.entire.txt -j cond2_rep2.entire.txt -k cond2_rep3.entire.txt -l cond2_rep4.entire.txt -1 cond1_rep1.hyb -2 cond1_rep2.hyb -3 cond1_rep3.hyb -4 cond1_rep4.hyb -5 cond2_rep1.hyb -6 cond2_rep2.hyb -7 cond2_rep3.hyb -8 cond2_rep4.hyb -0 GENE_NAME -9 FASTA -v ~/dir_of_VARNAcmd.jar"
