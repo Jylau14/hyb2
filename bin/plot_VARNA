@@ -1,0 +1,49 @@
+#!/bin/bash -e
+
+# plots secondary structure of RNA after comradesFold2 (plotting function of Hyb2) through the use of VARNAcmd (installation required).
+# plot_VARNA -i *.ct -s *VARNA_scores.txt -j VARNAcmd_location. 
+# plot_VARNA -i NORAD_2631-3400.fasta292.ct -s Nr-all.NORAD-NORAD__NORAD_2631-3400.fasta292.VARNA_log2scores.txt -j ~/bin/VARNA/build/jar/VARNAcmd.jar
+# -t 1, VARNA interactive mode (pop-up)
+
+# parsing command line options
+while getopts "i:s:j:x:y:l:i:0:" OPTION
+do
+        case $OPTION in
+                i) IN_FILE=$OPTARG ;;
+                s) SCORE=$OPTARG ;;
+                j) VARNA=$OPTARG ;;
+                x) X_COORD=$OPTARG ;;
+                y) Y_COORD=$OPTARG ;;
+                l) LEN=$OPTARG ;;
+                0) INTERACTIVE=$OPTARG ;;
+                ?)
+
+                echo "incorrect option"
+                exit 0
+                ;;
+        esac
+done
+
+#head NORAD_2631-3400.fasta292.ct
+#cat Nr-all.NORAD-NORAD__NORAD_2631-3400.fasta292.VARNA_scores.txt | paste -s -d "," > 2.txt
+
+header=$(awk 'FNR==1{print $5}' $IN_FILE)
+colorscores=$(paste -s -d "," $SCORE)
+smax=$(max $SCORE)
+colorStyle=$(echo $smax | awk '{print "0.00:#FFFFFF,"$1*0.2":#4747FF,"$1*0.55":#1CFF47,"$1*0.65":#FFFF47,"$1*0.9":#FF4747,"$1":#B64747"}')
+
+if [ "$INTERACTIVE" = "1" ]
+then
+	java -jar $VARNA -i $IN_FILE -bpStyle simple -colorMap $colorscores -colorMapMin "0" -colorMapMax "$smax" -colorMapStyle "$colorStyle" -title "$header" -spaceBetweenBases "0.6"
+	echo "Modify base numbers: svg_mod_coord.sh -i svg -x start_coord -y 2nd_strand_coord(only if it exist) -l length_of_fragment"
+else
+	java -jar $VARNA -i $IN_FILE -bpStyle simple -colorMap $colorscores -colorMapMin "0" -colorMapMax "$smax" -colorMapStyle "$colorStyle" -title "$header" -spaceBetweenBases "0.6" -o ${IN_FILE/ct/svg}
+	if [ -z $Y_COORD ]
+	then
+		svg_mod_coord.sh -i ${IN_FILE/ct/svg} -x $X_COORD -l $LEN -p ${SCORE%%_*txt}
+		rm ${IN_FILE/ct/svg}
+	else
+        	svg_mod_coord.sh -i ${IN_FILE/ct/svg} -x $X_COORD -y $Y_COORD -l $LEN -p ${SCORE%%_*txt}
+		rm ${IN_FILE/ct/svg}
+	fi
+fi
