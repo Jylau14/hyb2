@@ -21,7 +21,7 @@ b3 <- as.character(args[12])
 b4 <- as.character(args[13])
 for (i in 1:13) {
   if (is.na(args[i])) {
-    args[i] <- ''
+    args[i] <- 'NOTSPECIFIED'
   }
 }
 #list files for reading
@@ -62,10 +62,10 @@ for (i in unique(all_data$ID)){
     scale_x_continuous(expand = c(0, 0), limits = c(x1, x2), breaks = c(c(x1+25), c(x2-45)), labels=c(x1, x2))+
     scale_y_continuous(expand = c(0, 0), limits = c(y1, y2), breaks = c(c(y1+25), c(y2-45)), labels=c(y1, y2))+
     theme_void()+
-    theme(axis.text=element_text(size=8))+
+    theme(axis.text=element_text(size=7))+
     theme(panel.background = element_rect(colour = "black", size=0.5))+
-    theme(plot.title=element_text(size=10))
+    theme(plot.title=element_text(size=8))
 }
 com <- do.call("grid.arrange", c(cdm,nrow=1))
 ndata=length(cdm)
-ggsave(filename = paste0(x1,x2,y1,y2,".pdf"), plot = com, units = "cm", height = 5, width = c(ndata*5))
+ggsave(filename = paste0(x1,x2,y1,y2,".pdf"), plot = com, units = "cm", height = 8, width = c(ndata*8))
