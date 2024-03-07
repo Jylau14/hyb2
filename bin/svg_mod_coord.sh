@@ -2,13 +2,14 @@
 #modify coords of svg file from VARNA RNA Structure
 
 #parsing command line options
-while getopts "i:x:y:l:" OPTION
+while getopts "i:x:y:l:p:" OPTION
 do
         case $OPTION in
                 i) IN_FILE=$OPTARG ;;
                 x) X_COORD=$OPTARG ;;
                 y) Y_COORD=$OPTARG ;;
                 l) LEN=$OPTARG ;;
+		p) PREFIX=$OPTARG ;;
                 ?)
 
                 echo "incorrect option"
@@ -17,8 +18,15 @@ do
         esac
 done
 
-OUT_FILE=${IN_FILE/.svg/_plot.svg}
+#OUT_FILE=${IN_FILE/.svg/_plot.svg}
 X=$(($X_COORD-1))
+
+if [ -z $PREFIX ]
+then
+	OUT_FILE=${IN_FILE/.svg/_plot.svg}
+else
+	OUT_FILE=$PREFIX"."${IN_FILE/.svg/_plot.svg}
+fi
 
 if [ -z $Y_COORD ]
 then
