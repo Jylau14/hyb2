@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-# plots secondary structure of RNA after comradesFold2 (plotting function of Hyb2) through the use of VARNAcmd (installation required).
+# plots secondary structure of RNA after hyb2_fold (plotting function of Hyb2) through the use of VARNAcmd (installation required).
 # plot_VARNA -i *.ct -s *VARNA_scores.txt -j VARNAcmd_location. 
 # plot_VARNA -i NORAD_2631-3400.fasta292.ct -s Nr-all.NORAD-NORAD__NORAD_2631-3400.fasta292.VARNA_log2scores.txt -j ~/bin/VARNA/build/jar/VARNAcmd.jar
 # -t 1, VARNA interactive mode (pop-up)
@@ -23,9 +23,6 @@ do
                 ;;
         esac
 done
-
-#head NORAD_2631-3400.fasta292.ct
-#cat Nr-all.NORAD-NORAD__NORAD_2631-3400.fasta292.VARNA_scores.txt | paste -s -d "," > 2.txt
 
 header=$(awk 'FNR==1{print $5}' $IN_FILE)
 colorscores=$(paste -s -d "," $SCORE)
