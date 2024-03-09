@@ -12,8 +12,11 @@ hval=0.1
 gmax=4
 hmax=10
 
+#FOLD=1 (ViennaRNA) as default, specify FOLD=0 to use UNAFold
+FOLD=1
+
 # parsing command line options
-while getopts "i:d:o:v:g:h:" OPTION
+while getopts "i:d:o:v:g:h:r:" OPTION
 do
      case $OPTION in
          i) SAM=$OPTARG ;;
@@ -22,6 +25,7 @@ do
          v) hval=$OPTARG ;;
          g) gmax=$OPTARG;;
          h) hmax=$OPTARG;;
+	 r) FOLD=$OPTARG ;;
 	 ?) 
 
              echo "incorrect option"
@@ -54,22 +58,25 @@ then
 	make_hyb_db $DB
 fi
 hyb2fasta_bits_allRNAs.awk ${DB/fasta/tab} $OUT"_hybrids_ua.hyb"
-hybrid-min $OUT"_hybrids_ua.bit_1.fasta" $OUT"_hybrids_ua.bit_2.fasta" 2>&1 > /dev/null
-Ct2B_GK_3.pl $OUT"_hybrids_ua.bit_1.fasta-"$OUT"_hybrids_ua.bit_2.fasta.ct" > $OUT"_hybrids_ua.vienna"
+if [ "$FOLD" == "1" ]
+then
+	paste -d "&" $OUT"_hybrids_ua.bit_1.fasta" $OUT"_hybrids_ua.bit_2.fasta" | RNAcofold --noconv --noPS | sed 's/&>/-/g;s/&//g;s/>//g;s/ /\t/g' > $OUT"_hybrids_ua.vienna"
+else
+	hybrid-min $OUT"_hybrids_ua.bit_1.fasta" $OUT"_hybrids_ua.bit_2.fasta" 2>&1 > /dev/null
+	Ct2B_GK_3.pl $OUT"_hybrids_ua.bit_1.fasta-"$OUT"_hybrids_ua.bit_2.fasta.ct" > $OUT"_hybrids_ua.vienna"
+fi
 add_dG_hyb.pl $OUT"_hybrids_ua.hyb" $OUT"_hybrids_ua.vienna" > $OUT"_hybrids_ua_dg.hyb"
 collapse_hyb.sh $OUT"_hybrids_ua_dg.hyb" | filter_homopolymers.awk | hyb_mapped_position_overlaps_3.awk | hyb_chim_types.awk > $OUT".hyb"
 awk '$16>=5' $OUT".hyb" > $OUT"_homodimers.hyb"
-make_nicer_vienna_hOH5.awk $OUT"_hybrids_ua.vienna" > $OUT"_hybrids_ua.viennad"
+# make_nicer_vienna_hOH5.awk $OUT"_hybrids_ua.vienna" > $OUT"_hybrids_ua.viennad"
 hybrid_stats $OUT".hyb" > $OUT"_hybrids.hyb_stats.txt"
 
 echo "Converted to hyb format."
 
 #Clear intermediate files
-rm $OUT"_hybrids_ua.bit_1.fasta-"$OUT"_hybrids_ua.bit_2.fasta.run"
-rm $OUT"_hybrids_ua.bit_1.fasta-"$OUT"_hybrids_ua.bit_2.fasta.37.plot"
-rm $OUT"_hybrids_ua.bit_1.fasta-"$OUT"_hybrids_ua.bit_2.fasta.37.ext"
-rm $OUT"_hybrids_ua.bit_1.fasta-"$OUT"_hybrids_ua.bit_2.fasta.dG"
-rm $OUT"_hybrids_ua.bit_1.fasta-"$OUT"_hybrids_ua.bit_2.fasta.asc"
+rm ${SAM/.sam/.filt.sam}
+rm $OUT"_hybrids_ua.bit_1.fasta"*
+rm $OUT*"_hybrids_ua.bit_2.fasta"
 rm $OUT"_TEMP_FILE1_TXT" $OUT"_hybrids_ua.hyb" $OUT"_hybrids_ua.vienna"
 rm $OUT"_hybrids.fasta" $OUT"_mtophits.blast" $OUT"_mtophits.ref"
 rm $OUT".temp.blast" $OUT".count.blast" $OUT".collapse.blast"
