@@ -61,3 +61,5 @@ then
 	viewpoint_graph.R ${HYB/.hyb/"_"$GENE_1"_"$GENE_2".gplot"}
 fi
 
+rm $GENE_1*".length.txt"
+rm $GENE_1*"_ref.blast"
