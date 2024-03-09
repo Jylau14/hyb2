@@ -1,5 +1,4 @@
 #!/bin/bash -e
-
 #hyb2
 #takes aligned proximity ligation reads from different mapping tools in the SAM format to be processed in the hyb pipeline
 #generates a list of chimeric interactions with their coordinates, sequence, and folding energy
@@ -16,13 +15,15 @@
 #analysis of 2 genes (ZIKV and 18S rRNA), heatmap between the 2 genes, and RNA structure between 1001-1500nt ZIKV and 101-600 18S rRNA
 #hyb2 -i Livefire2.STAR.Aligned.out.sam -1 ~/Virus_Structure/hybdb/GRCh38_and_Livefire/hg38_and_Zika.fasta -o test_2 -a ENSG_ENST_ZIKV-PE243-2015_virusRNA -b ENSG_NR003286-4_RNA18SN5_rRNA -x 1001 -y 101 -l 500 -j ~/bin/VARNA/build/jar/VARNAcmd.jar
 
+#FOLD=1 for ViennaRNA, 0 for UNAFold
 hval=0.1
 gmax=4
 hmax=10
 LIMIT=0.95
+FOLD=1
 
 # parsing command line options
-while getopts "i:1:2:o:v:m:h:a:b:q:x:y:l:j:" OPTION
+while getopts "i:1:2:o:v:m:h:a:b:q:x:y:l:j:r:" OPTION
 do
      case $OPTION in
          i) IN_FILE=$OPTARG ;;
@@ -39,6 +40,7 @@ do
          y) Y_COORD=$OPTARG ;;
          l) LEN=$OPTARG ;;
 	 j) VARNA=$OPTARG ;;
+	 r) FOLD=$OPTARG ;;
          ?)
 
              echo "incorrect option"
@@ -120,7 +122,7 @@ fi
 #Convert SAM to Hyb Format
 if [ ! -f $OUT".hyb" ]
 then
-	if sam2hyb -i $SAM -d $DB_1 -o $OUT -v $hval -g $gmax
+	if sam2hyb -i $SAM -d $DB_1 -o $OUT -v $hval -g $gmax -r $FOLD
 	then
 		echo "Hyb File Generated."
 	else
@@ -173,13 +175,13 @@ fi
 #Generate RNA Secondary Structure of selected strands
 if [ ! -z $X_COORD ] && [ ! -z $LEN ] && [ -z $GENE_2 ] && [ -z $Y_COORD ]
 then
-	comradesFold2 -i $OUT".hyb" -a $GENE_1 -1 $DB_1 -x $X_COORD -l $LEN -j $VARNA
+	hyb2_fold -i $OUT".hyb" -a $GENE_1 -1 $DB_1 -x $X_COORD -l $LEN -j $VARNA -r $FOLD
 elif [ ! -z $X_COORD ] && [ ! -z $LEN ] && [ -z $GENE_2 ] && [ ! -z $Y_COORD ]
 then
-	comradesFold2 -i $OUT".hyb" -a $GENE_1 -1 $DB_1 -x $X_COORD -y $Y_COORD -l $LEN -j $VARNA
+	hyb2_fold -i $OUT".hyb" -a $GENE_1 -1 $DB_1 -x $X_COORD -y $Y_COORD -l $LEN -j $VARNA -r $FOLD
 elif [ ! -z $X_COORD ] && [ ! -z $LEN ] && [ ! -z $GENE_2 ] && [ ! -z $Y_COORD ]
 then
-	comradesFold2 -i $OUT".hyb" -a $GENE_1 -b $GENE_2 -1 $DB_1 -2 $DB_2 -x $X_COORD -y $Y_COORD -l $LEN -j $VARNA
+	hyb2_fold -i $OUT".hyb" -a $GENE_1 -b $GENE_2 -1 $DB_1 -2 $DB_2 -x $X_COORD -y $Y_COORD -l $LEN -j $VARNA -r $FOLD
 else
 	echo "Error! Aborting Generation of Secondary Structure! Check input arguments." 1>&2
 fi
