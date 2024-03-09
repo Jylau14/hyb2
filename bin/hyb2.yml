@@ -34,7 +34,7 @@ dependencies:
   - bwidget=1.9.14
   - bzip2=1.0.8
   - c-ares=1.18.1
-  - ca-certificates=2020.10.14
+  - ca-certificates=2024.2.2
   - cairo=1.16.0
   - certifi=2020.6.20
   - curl=7.82.0
@@ -104,6 +104,8 @@ dependencies:
   - pango=1.50.6
   - pcre=8.45
   - pcre2=10.37
+  - pear=0.9.6
+  - perl=5.32.1
   - pip=20.0.2
   - pixman=0.40.0
   - pthread-stubs=0.4
@@ -204,6 +206,7 @@ dependencies:
   - sysroot_linux-64=2.12
   - tk=8.6.12
   - tktable=2.10
+  - viennarna=2.5.0
   - wheel=0.37.1
   - xorg-kbproto=1.0.7
   - xorg-libice=1.0.10
