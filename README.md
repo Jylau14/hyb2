@@ -6,7 +6,7 @@ A ***streamlined*** program for analyzing proximity ligation experiments from ma
 2. Plot contact density map of selected genes and viewpoint graphs, 
 3. Generate intra-/intermolecular RNA structure of any selected regions.
 
-Additionally, plot differences and similarities between experiments.
+**Additionally, plot differences and similarities between experiments.**
 
 <p align="center">
   <img src="https://github.com/Jylau14/hyb2/assets/110675091/7121ebda-6b16-444c-b07c-483ee595adb7" height="500" width="700">
@@ -22,9 +22,9 @@ Hyb2 is a bioinformatics pipeline for the analysis of RNA proximity ligation exp
 
 It **generates RNA structures with experimental support** for short- and long-range intramolecular interactions, intermolecular interactions, and RNA homodimers. 
 
-It **supports commonly used data formats (SAM/BAM)** and integrates with a variety of mapping and analysis tools. 
+It **supports commonly used data formats (SAM)** and integrates with a variety of mapping and analysis tools. 
 
-The Hyb2 pipeline is **streamlined** to receive input of SAM files and generates hyb file, contact density map, and RNA structure as **outputs in a single command on the Linux command line**. 
+The Hyb2 pipeline is **streamlined** to receive input of fastq/SAM files and generates a hyb file with information on RNA-RNA interactions, and various visualizations of data: contact density map, viewpoint graph, and RNA structure as **outputs in a single command on the Linux command line**. 
 
 ## Prerequisites
 Linux Operating System with Miniconda Installed
@@ -42,8 +42,21 @@ tar -zxf ncbi-blast-2.14.1+-x64-linux.tar.gz
 wget https://github.com/BenLangmead/bowtie2/releases/download/v2.3.4.3/bowtie2-2.3.4.3-linux-x86_64.zip
 unzip bowtie2-2.3.4.3-linux-x86_64.zip
 ```
+VARNA, if not installed, read:
+
+> https://github.com/yannponty/VARNA
+
+or: 
+
+```
+git clone https://github.com/yannponty/VARNA.git
+cd VARNA
+ant compile
+ant jar
+ant run
+```
 ## Installation
-Hyb2 can be downloaded **into bin** from GitHub (with UNAFold package included) with:
+Hyb2 can be downloaded into bin from GitHub with:
 
 ```
 wget https://github.com/Jylau14/hyb2/archive/main.zip
@@ -58,7 +71,6 @@ Add installation location to your PATH:
 
 ```
 export PATH=hyb2/bin:$PATH
-export PATH=hyb2/unafold/bin:$PATH
 ```
 
 Create hyb2 environment on conda:
@@ -70,7 +82,7 @@ conda env create -f hyb2.yml
 ## Getting Started
 To run hyb2 using a fastq/sam input file, type in the command line:
 ```
-hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o run_1 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500
+hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o run_1 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
 ```
 To run the program, the first thing to have is the sequence alignment map (SAM) file or a fastq file. 
 
@@ -78,10 +90,7 @@ If the fastq files from RNA proximity ligation experiments are not mapped to ref
 
 The second file needed will contain the reference fasta sequences.
 
-**VARNA** is needed to visualize the RNA structures. 
-
-It can be downloaded from:
-> https://varna.lri.fr/
+**VARNA** is used to visualize the RNA structures. 
 
 ### Reference Fasta Files
 The following ID format is preferred to provide a more complete set of information on the sequences:
@@ -101,7 +110,11 @@ After being formatted in the pipeline:
 Or see:
 > https://github.com/Jylau14/hyb2/blob/main/data/Zika_18S_formatted.fasta
 
-This format, using **underscore (\_)** should be used as the input command arguement when selecting genes as **pipe (|)** starts another process and cripples the command.
+This format, using **underscore (\_)** should be used as the input command arguement when selecting genes as **pipe (|)** starts another process and cripples the command, which can be easily done using **sed**
+
+```
+sed 's/|/_/g' ref.fasta
+```
 
 ## Running the Program
 Hyb2 environment needs to be activated for essential softwares.
@@ -142,30 +155,34 @@ To get familiar with the command line arguements, it could be broadly explained 
 
 -l lengths_of_fragments
 
+-j location of VARNAcmd.jar
+
+-r toggle interactive mode of VARNA (default=1, off, input 0 for VARNA pop up)
+
 ## 
 ### Analysis of short-range intramolecular interactions:
 RNA Structure Folding from 1001-1500nt positions of Zika virus (ZIKV).
 ```
-hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o test_1 -a ZIKV-PE243-2015_virusRNA -x 1001 -l 500
+hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o test_1 -a ZIKV-PE243-2015_virusRNA -x 1001 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
 ```
 ### Analysis of long-range intramolecular interactions:
 RNA Structure Folding of 1001-1500nt positions with 5001-5500nt positions of ZIKV.
 ```
-hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o test_2 -a ZIKV-PE243-2015_virusRNA -x 1001 -y 5001 -l 500
+hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o test_2 -a ZIKV-PE243-2015_virusRNA -x 1001 -y 5001 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
 ```
 ### Analysis of intermolecular interactions:
 RNA Structure Folding of 7501-8000nt positions of ZIKV with 501-550nt positions of 18S rRNA.
 ```
-hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -2 18S.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500
+hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -2 18S.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
 ```
 Or if reference sequences are contained in the same file:
 ```
-hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500
+hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
 ```
 ### Analysis of homodimer interactions:
 RNA Structure Folding of 3501-3700nt positions of ZIKV with 3501-3700nt positions of a second strand of ZIKV.
 ```
-hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o test_4 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 3501 -y 3501 -l 200
+hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o test_4 -a ZIKV-PE243-2015_virusRNA -b ZIKV-PE243-2015_virusRNA -x 3501 -y 3501 -l 200 -j ~/VARNA/build/jar/VARNAcmd.jar
 ```
 ## 
 ### Randomized Parallel RNA Structure Folding
@@ -173,7 +190,7 @@ To perform randomized parellel RNA structure folding, which folds the RNA 1,000 
 
 Taking the analysis of intermolecular interactions as an example:
 ```
-qsub comradesFold -c test_3_ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_rRNA-501-1000.1-1100_folding_constraints.txt -i ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_rRNA-501-1000_1-1100.fasta -s 1
+qsub comradesFold2 -c test_3_ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_rRNA-501-1000.1-1100_folding_constraints.txt -i ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_rRNA-501-1000_1-1100.fasta -s 1
 
 comradesScore -i test_3_ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_rRNA-501-1000.basepair_scores.txt -f ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_rRNA-501-1000_1-1100.fasta 
 ```
@@ -188,6 +205,10 @@ Up to 4 replicates for each experiment can be used as input, with a minimum of 2
 The input files for **hyb2_compare** comes from outputs of the main hyb2 pipeline **(*entire.txt)**.
 
 For example, to identify the differences and similarities between control and experimental conditions:
+```
+hyb2_compare -a control_rep1.entire.txt -b control_rep2.entire.txt -c control_rep3.entire.txt -d control_rep4.entire.txt -i exp_rep1.entire.txt -j exp_rep2.entire.txt -k exp_rep3.entire.txt -l exp_rep4.entire.txt -1 control_rep1.hyb -2 control_rep2.hyb -3 control_rep3.hyb -4 control_rep4.hyb -5 exp_rep1.hyb -6 exp_rep2.hyb -7 exp_rep3.hyb -8 exp_rep4.hyb -0 GENE_NAME -9 ref.fasta -v ~/VARNA/build/jar/VARNAcmd.jar
+```
+The automatic plotting of RNA structures can be skipped by omitting some options, and with the command:
 ```
 hyb2_compare -a control_rep1.entire.txt -b control_rep2.entire.txt -c control_rep3.entire.txt -d control_rep4.entire.txt -i exp_rep1.entire.txt -j exp_rep2.entire.txt -k exp_rep3.entire.txt -l exp_rep4.entire.txt
 ```
