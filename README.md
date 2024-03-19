@@ -93,7 +93,7 @@ The second file needed will contain the reference fasta sequences.
 **VARNA** is used to visualize the RNA structures. 
 
 ### Reference Fasta Files
-The following ID format is preferred to provide a more complete set of information on the sequences:
+The following ID format is **preferred** to provide a more complete set of information on the sequences:
 
 > \>Gene stable ID version, Transcript stable ID version, Gene name, Gene type
 
@@ -109,12 +109,6 @@ After being formatted in the pipeline:
 
 Or see:
 > https://github.com/Jylau14/hyb2/blob/main/data/Zika_18S_formatted.fasta
-
-This format, using **underscore (\_)** should be used as the input command arguement when selecting genes as **pipe (|)** starts another process and cripples the command, which can be easily done using **sed**
-
-```
-sed 's/|/_/g' ref.fasta
-```
 
 ## Running the Program
 Hyb2 environment needs to be activated for essential softwares.
