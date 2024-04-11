@@ -93,6 +93,7 @@ done
 cat $ACCEPTED_CONSTRAINTS > $CURRENT_CONSTRAINTS
 if [ "$FOLD" == "1" ]; then
       cat $IN_FASTA$SGE_TASK_ID | RNAfold --noconv --noPS --commands=$CURRENT_CONSTRAINTS | sed 's/&>/-/g;s/&//g' > $VIENNA_OUTPUT
+      cat $VIENNA_OUTPUT | b2ct | sed 's/ENERGY =/dG =/g' > $CT_OUTPUT
 else
       hybrid-ss-min -c $IN_FASTA$SGE_TASK_ID
       Ct2B_GK_3.pl HYBRID_SS_MIN=1 $CT_OUTPUT > $VIENNA_OUTPUT
