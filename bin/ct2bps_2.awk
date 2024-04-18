@@ -2,7 +2,7 @@
 
 BEGIN{OFS="\t"}
 /dG/{
-	n=split($8,a,"-")
+	n=split($NF,a,"-")
 	x=split(a[n/2],i,"_")
 	y=split(a[n],j,"_")
 	bit1_st=i[x-1]
