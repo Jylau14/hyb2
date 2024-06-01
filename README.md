@@ -1,12 +1,12 @@
 # Hyb2
-***Generates RNA structures of short- and long-range intra/intermolecular interactions, and homodimers.***
+***Easily Generates RNA structures of short- and long-range intra/intermolecular interactions, and homodimers with an Interactive Graphical User Interface.***
 
 A ***streamlined*** program for analyzing proximity ligation experiments from mapped files in the fastq/SAM format to: 
 1. Generate a list of chimeric interactions with their coordinates, sequence, and folding energy, 
 2. Plot contact density map of selected genes and viewpoint graphs, 
 3. Generate intra-/intermolecular RNA structure of any selected regions.
 
-**Additionally, plot differences and similarities between experiments.**
+**Additionally, creates an interactive GUI, and plots differences and similarities between experiments.**
 
 <p align="center">
   <img src="https://github.com/Jylau14/hyb2/assets/110675091/7121ebda-6b16-444c-b07c-483ee595adb7" height="500" width="700">
@@ -26,8 +26,10 @@ It **supports commonly used data formats (SAM)** and integrates with a variety o
 
 The Hyb2 pipeline is **streamlined** to receive input of fastq/SAM files and generates a hyb file with information on RNA-RNA interactions, and various visualizations of data: contact density map, viewpoint graph, and RNA structure as **outputs in a single command on the Linux command line**. 
 
+Creates a **GUI to easily select and visualize RNA-RNA interactions** from contact density maps, with styling options using VARNA. GUI allows selection of specific interactions directly from the contact density maps, and **generating the corresponding colour-coded RNA secondary structure** in a VARNA GUI pop-up.
+
 ## Prerequisites
-Linux Operating System with Miniconda Installed
+Linux/ Mac Operating System with Miniconda Installed
 
 If Miniconda not installed, read:
 
@@ -77,6 +79,35 @@ Create hyb2 environment on conda:
 
 ```
 conda env create -f hyb2.yml
+```
+
+Create hyb2 GUI environment
+
+First on conda:
+
+```
+conda env create -f hyb2_GUI.yml
+```
+
+Then on R:
+
+```
+conda activate hyb2_GUI
+R
+renv::init()
+```
+
+Replace the new renv.lock with hyb2/bin/renv.lock, then run:
+
+```
+renv::restore()
+```
+
+Add hyb2/bin to PATH in R with example directory:
+
+```
+old_path <- Sys.getenv("PATH")
+Sys.setenv(PATH = paste(old_path, "/hyb2/bin", sep = ":"))
 ```
 
 ## Getting Started
@@ -188,7 +219,15 @@ qsub comradesFold2 -c test_3_ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18
 
 comradesScore -i test_3_ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_rRNA-501-1000.basepair_scores.txt -f ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_rRNA-501-1000_1-1100.fasta 
 ```
-## 
+##
+### Graphical User Interface
+To create an interactive interface pop-up window:
+```
+conda activate hyb2_GUI
+
+hyb2_app -i test_1.entire.txt -h test_1.hyb -a ZIKV-PE243-2015_virusRNA -1 Zika_18S.fasta -j ~/VARNA/build/jar/VARNAcmd.jar
+```
+##
 ### Differential Coverage Map and Similarity Heatmap
 To compare between 2 different proximity ligation experiments, the program incorporates DESeq2 to identify the differential chimeras, and produces a differential coverage map.
 
@@ -227,7 +266,7 @@ Column 16: Overlap Score
 
 Column 17: **Type of Chimera** (See chim_types for a visualization of the types of chimera)
 > https://github.com/Jylau14/hyb2/blob/main/bin/chim_types
-
+##
 ### Contact Density Maps
 <p align="middle">
   <img src="https://user-images.githubusercontent.com/110675091/185672361-a9c49db9-9c93-4dff-aa3e-0545a70d36e8.png" height="330" width="330" />
@@ -246,7 +285,7 @@ The contrast of the spots corresponds to the chimeric counts, with darker spots 
 Although the contrast is capped at an upper quantile limit (default 95%).
 
 If 2 genes were input in the command line, the  nuclotide positions of the first gene will be plotted as the x-axis, and the other on y-axis.
-
+##
 ### Viewpoint Graphs
 <p align="center">
   <img src="https://user-images.githubusercontent.com/110675091/184885181-90b10327-67e6-44ed-87f6-81b896b8defc.png" height="200" width="350">
@@ -268,7 +307,21 @@ To understand the secondary structures, read:
 The structures are colour coded based on log2 of supporting reads, with red being the most supported, blue the least, and blank for none. 
 
 (VARNA instructions)
+##
+### Hyb2 GUI 
+<p align="middle">
+  <img src="https://github.com/Jylau14/hyb2/assets/110675091/b9105f5d-8d47-4ca3-9adb-e51e62012fd9" height="350" width="500" />
+  <img src="https://github.com/Jylau14/hyb2/assets/110675091/c0dc4f6d-db8a-492b-85fb-272656882b66" height="300" width="450" />
+</p>
 
+The GUI shows 3 contact density maps. Highlighting the first contact density map (left) will zoom into the region (plotted in the middle). Highlighting an interaction on the second plot will generate a zoomed-in version of the interaction in the third contact density map (right).
+
+The tables show the coordinates of each interaction, with chimeric counts shown. Uncapped counts refer to the actual chimeric counts, and count refer to counts capped at 95% percentile.
+
+There's options to select what types of RNA-RNA interaction to generate, the start X (and Y) coordinates, and length of RNA to fold. X (and Y) coordinates are automatically inputted based on the highlighted interaction, but can also be entered manually.
+
+Clicking the "Fold RNA" button creates a VARNA GUI pop-up with the colour-coded RNA structure generated.
+##
 ### Differential Coverage Maps & Similarity Heatmap
 <p align="center">
   <img src="https://github.com/Jylau14/hyb2/assets/110675091/a7b32e9d-4a4e-46c5-a141-d4df142bc9a1" height="300" width="600">
