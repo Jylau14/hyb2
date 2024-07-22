@@ -1,0 +1,34 @@
+#!/bin/bash
+
+# hyb2_app -i Livefire.entire.txt -h Livefire.hyb -a ENSG_ENST_ZIKV-PE243-2015_virusRNA -1 all_Zika.fasta -j ~/bin/VARNA-master/build/jar/VARNAcmd.jar
+
+# parsing command line options
+while getopts "i:h:a:b:1:2:j:" OPTION
+do
+     case $OPTION in
+         i) INPUT=$OPTARG ;;
+         h) HYB=$OPTARG ;;
+         a) GENE=$OPTARG ;;
+         b) GENE2=$OPTARG ;;
+         1) FASTA=$OPTARG ;;
+	 2) FASTA2=$OPTARG ;;
+         j) VARNA=$OPTARG ;;
+         ?)
+             echo "incorrect option"
+             exit 0
+             ;;
+     esac
+done
+
+if [ -z $GENE2 ] && [ -z $FASTA2 ]
+then
+	Rscript -e 'shiny::runApp("hyb2_shiny.R", launch.browser=TRUE)' $INPUT $HYB $GENE $FASTA $VARNA $GENE $FASTA
+elif [ -z $FASTA2 ] && [ ! -z $GENE2 ]
+then
+	Rscript -e 'shiny::runApp("hyb2_shiny.R", launch.browser=TRUE)' $INPUT $HYB $GENE $FASTA $VARNA $GENE2 $FASTA
+elif [ ! -z $GENE2 ] && [ ! -z $FASTA2 ]
+then
+	Rscript -e 'shiny::runApp("hyb2_shiny.R", launch.browser=TRUE)' $INPUT $HYB $GENE $FASTA $VARNA $GENE2 $FASTA2
+else
+	echo "Something went wrong! Check input arguments."
+fi

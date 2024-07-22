@@ -48,6 +48,11 @@ then
 	cp $FASTA_2 ./
 fi
 
+if [ -z $FASTA_2 ]
+then
+	FASTA_2=$FASTA_1
+fi
+
 #Redirect input fasta as copied file in current directory
 FASTA_1=${FASTA_1##*/}
 FASTA_2=${FASTA_2##*/}
@@ -77,7 +82,7 @@ then
 #folding
 	SPAN=$LEN
 	comradesMakeConstraints_2 -i $OUT_FILE -f $OUT_FASTA -b 1 -e $SPAN
-	comradesFold2 -c ${OUT_FILE/.hyb/.1-$(($SPAN))_folding_constraints.txt} -i $OUT_FASTA
+	comradesFold2 -c ${OUT_FILE/.hyb/.1-$(($SPAN))_folding_constraints.txt} -i $OUT_FASTA -r $FOLD
 
 #Long-range intramolecular / Homodimer folding -----------------------------------------------------------------------------------------------------------
 elif [ -z $GENE_2 ]
@@ -126,12 +131,13 @@ then
 #extracting fasta sequence
 	awk '{if(NR==1) {print $0} else {if($0 ~ /^>/) {print "\n"$0} else {printf $0}}}' $FASTA_1 | grep -A1 $GENE_1 | awk -v b=$X1 -v e=$LEN '{if (/^>/) {print $1} else {print substr($0,b,e)}}' > $OUT_FASTA
 #padding
-	awk '{if(NR==1) {print $0} else {if($0 ~ /^>/) {print "\n"$0} else {printf $0}}}' $FASTA_1 | grep -A1 $GENE_1 | awk -v b=1 -v e=100 '{if (/^>/) {print $1} else {print substr($0,b,e)}}' >> $OUT_FASTA
+#	awk '{if(NR==1) {print $0} else {if($0 ~ /^>/) {print "\n"$0} else {printf $0}}}' $FASTA_1 | grep -A1 $GENE_1 | awk -v b=1 -v e=100 '{if (/^>/) {print $1} else {print substr($0,b,e)}}' >> $OUT_FASTA
+        echo 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT' >> $OUT_FASTA
 #2nd strand sequence
 	awk '{if(NR==1) {print $0} else {if($0 ~ /^>/) {print "\n"$0} else {printf $0}}}' $FASTA_1 | grep -A1 $GENE_1 | awk -v b=$Y1 -v e=$LEN '{if (/^>/) {print $1} else {print substr($0,b,e)}}' >> $OUT_FASTA
 
 #merging fasta sequence
-	awk 'NF' $OUT_FASTA | awk 'BEGIN{i=1}{line[i++]=$0}END{print line[1]"\n"line[2] line[4] line[6]}' > ${OUT_FASTA/.fasta/.tmp} && mv ${OUT_FASTA/.fasta/.tmp} $OUT_FASTA
+	awk 'NF' $OUT_FASTA | awk 'BEGIN{i=1}{line[i++]=$0}END{print line[1]"\n"line[2] line[3] line[5]}' > ${OUT_FASTA/.fasta/.tmp} && mv ${OUT_FASTA/.fasta/.tmp} $OUT_FASTA
 
 #folding
 	SPAN=$(($LEN+$LEN+100))
@@ -156,12 +162,13 @@ else
 #extracting fasta sequence
 	awk '{if(NR==1) {print $0} else {if($0 ~ /^>/) {print "\n"$0} else {printf $0}}}' $FASTA_1 | grep -A1 $GENE_1 | awk -v b=$X1 -v e=$LEN '{if (/^>/) {print $1} else {print substr($0,b,e)}}' > $OUT_FASTA
 #padding
-	awk '{if(NR==1) {print $0} else {if($0 ~ /^>/) {print "\n"$0} else {printf $0}}}' $FASTA_1 | grep -A1 $GENE_1 | awk -v b=1 -v e=100 '{if (/^>/) {print $1} else {print substr($0,b,e)}}' >> $OUT_FASTA
+#	awk '{if(NR==1) {print $0} else {if($0 ~ /^>/) {print "\n"$0} else {printf $0}}}' $FASTA_1 | grep -A1 $GENE_1 | awk -v b=1 -v e=100 '{if (/^>/) {print $1} else {print substr($0,b,e)}}' >> $OUT_FASTA
+        echo 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT' >> $OUT_FASTA
 #second RNA fragment
 	awk '{if(NR==1) {print $0} else {if($0 ~ /^>/) {print "\n"$0} else {printf $0}}}' $FASTA_2 | grep -A1 $GENE_2 | awk -v b=$Y1 -v e=$LEN '{if (/^>/) {print $1} else {print substr($0,b,e)}}' >> $OUT_FASTA
 
 #merging fasta sequences with padding in between, create space for folding
-	awk 'NF' $OUT_FASTA | awk 'BEGIN{i=1}{line[i++]=$0}END{print line[1]"\n"line[2] line[4] line[6]}' > ${OUT_FASTA/.fasta/.tmp} && mv ${OUT_FASTA/.fasta/.tmp} $OUT_FASTA
+	awk 'NF' $OUT_FASTA | awk 'BEGIN{i=1}{line[i++]=$0}END{print line[1]"\n"line[2] line[3] line[5]}' > ${OUT_FASTA/.fasta/.tmp} && mv ${OUT_FASTA/.fasta/.tmp} $OUT_FASTA
 #folding
 	SPAN=$(($LEN+$LEN+100))
 	comradesMakeConstraints_2 -i $OUT_FILE -f $OUT_FASTA -b 1 -e $SPAN -r $FOLD
@@ -228,7 +235,7 @@ else
 	fi
 fi
 
-if [ -f ${IN_FILE/hyb/}${vname/.VARNA_scores.txt/_plot.svg} ]
+if [ -f ${IN_FILE/hyb/}${vname/.VARNA_scores.txt/_plot.svg} ] || [ "$INTERACTIVE" = "1" ]
 then
 	echo "Plotting Concluded"
 else

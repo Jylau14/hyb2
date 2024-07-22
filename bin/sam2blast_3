@@ -1,5 +1,6 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 #changes from sam2blast: adds extra column of mapped sequence
+#changes from sam2blast_2: adapted python3 syntax
 """
 note on sam flags:
 0 = mapped to forward strand
@@ -87,10 +88,10 @@ def print_line(arr, flag, dblen):
     # u = (log(k*mp*np))/l
     # evalue = 1-exp(-exp(-l*(float(align_score)-u)))
     evalue = mp*np*2**-bit_score
-    print '%s\t%s\t%.2f\t%i\t%i\t%i\t%i\t%i\t%i\t%i\t%.2g\t%.1f\t%s'%(
+    print ('%s\t%s\t%.2f\t%i\t%i\t%i\t%i\t%i\t%i\t%i\t%.2g\t%.1f\t%s'%(
            arr[0], arr[2], identity, len_align, 
            mismatches, gaps, align_start+1, align_end, ref_start, ref_end,
-           evalue, bit_score, arr[9])
+           evalue, bit_score, arr[9]))
     
 if __name__ == "__main__":
     main(sys.argv[1])

@@ -101,7 +101,7 @@ similarity_heatmap.R $A1"-"$B1".entire.txt" $LIMIT
 
 #Split coverage map coordinates into individual interactions
 DESeq_interaction_split_select.py $A1"-"$B1 $range
-sed -i $'s/0\t0\t0.0\t0.0/x\ty\tlog2FoldChange\tpadj/g' $A1"-"$B1*enrichment.txt
+sed $'s/0\t0\t0.0\t0.0/x\ty\tlog2FoldChange\tpadj/g' $A1"-"$B1*enrichment.txt > $A1"-"$B1".tmp" && mv $A1"-"$B1".tmp" $A1"-"$B1*enrichment.txt
 
 #Plot top 10 (lowest padj) zoomed-in coverage density map of the differential interactions
 for f in $A1"-"$B1*enrichment.txt; do awk 'NR>1{print $1-150"\t"$1+150"\t"$2-150"\t"$2+150"\t"$3"\t"$4}' $f | sed '1s/^/x1\tx2\ty1\ty2\tlog2FoldChange\tpadj\n/;s/-.[0-9]\+\t/1\t/;s|\t\t|\t-|g' > ${f/.txt/.heatmap.txt}; done

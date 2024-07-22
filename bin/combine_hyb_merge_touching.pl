@@ -38,7 +38,7 @@ my $VERBOSE = 0;
 my $TWO_WAY_MERGE=0;
 my $PRINT_SEQ_IDS=0;
 
-eval '$'.$1.'$2;' while $ARGV[0] =~ /^([A-Za-z_0-9]+=)(.*)/ && shift;
+#eval '$'.$1.'$2;' while $ARGV[0] =~ /^([A-Za-z_0-9]+=)(.*)/ && shift;
 
 LINE:	while(<>){
 

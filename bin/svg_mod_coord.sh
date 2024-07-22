@@ -31,13 +31,13 @@ fi
 if [ -z $Y_COORD ]
 then
         awk -v X=$X '{split($10,a,"<"); split(a[1],b,">"); if ($10~/text/ && $10!~/>[A-Z]</ && $6~/7.5/) print $0" >"b[2]+X"</text>"; else print $0}' $IN_FILE | awk '{if ($10~/text/ && $10!~/>[A-Z]</ && $6~/7.5/) $10=" "; print $0}' > $OUT_FILE
-	sed -i 's/stroke-width="1.0"/stroke-width="0.25"/g' $OUT_FILE
+	sed 's/stroke-width="1.0"/stroke-width="0.25"/g' $OUT_FILE > $OUT_FILE".tmp" && mv $OUT_FILE".tmp" $OUT_FILE
 elif [ -z $X_COORD ] && [ -z $Y_COORD ]
 then
         sed 's/stroke-width="1.0"/stroke-width="0.25"/g' $IN_FILE > $OUT_FILE
 else
         Y=$(($Y_COORD-1))
         awk -v X=$X -v Y=$Y -v L=$LEN '{split($10,a,"<"); split(a[1],b,">"); if ($10~/text/ && $10!~/>[A-Z]</ && $6~/7.5/ && b[2]<=L) print $0" >"b[2]+X"</text>"; else if ($10~/text/ && $10!~/>[A-Z]</ && $6~/7.5/ && b[2]>L && b[2]<=L+100) print $0" "$10; else if ($10~/text/ && $10!~/>[A-Z]</ && $6~/7.5/ && b[2]>L+100) print $0" >"b[2]+Y-L-100"</text>"; else print $0}' $IN_FILE | awk '{if ($10~/text/ && $10!~/>[A-Z]</ && $6~/7.5/) $10=" "; print $0}' > $OUT_FILE
-        sed -i 's/stroke-width="1.0"/stroke-width="0.25"/g' $OUT_FILE
+        sed 's/stroke-width="1.0"/stroke-width="0.25"/g' $OUT_FILE > $OUT_FILE".tmp" && mv $OUT_FILE".tmp" $OUT_FILE
 fi
 

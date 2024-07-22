@@ -24,9 +24,12 @@ do
         esac
 done
 
+#head NORAD_2631-3400.fasta292.ct
+#cat Nr-all.NORAD-NORAD__NORAD_2631-3400.fasta292.VARNA_scores.txt | paste -s -d "," > 2.txt
+
 header=$(awk 'FNR==1{print $5}' $IN_FILE)
 colorscores=$(paste -s -d "," $SCORE)
-smax=$(sort -nr $SCORE | head -n1)
+smax=$(max $SCORE)
 colorStyle=$(echo $smax | awk '{print "0.00:#FFFFFF,"$1*0.2":#4747FF,"$1*0.55":#1CFF47,"$1*0.65":#FFFF47,"$1*0.9":#FF4747,"$1":#B64747"}')
 
 if [ "$INTERACTIVE" = "1" ]

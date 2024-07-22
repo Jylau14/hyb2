@@ -40,8 +40,8 @@ echo "Processing SAM file..."
 sam_filt $SAM > ${SAM/.sam/.filt.sam}
 
 #Scoring and converting filtered SAM file to blast format, collapse same sequence reads, filter for high confidence reads, remove duplicates, and compile into hyb format with fasta sequence for each entry, coordinates, and score
-sam2blast_2 ${SAM/.sam/.filt.sam} > $OUT".blast"
-collapse_blast.sh $OUT".blast" > $OUT".collapse.blast"
+sam2blast_3 ${SAM/.sam/.filt.sam} > $OUT".blast"
+collapse_blast_2.sh $OUT".blast" > $OUT".collapse.blast"
 mtophits_blast $OUT".collapse.blast" > $OUT"_mtophits.blast"
 create_reference_file.pl $OUT"_mtophits.blast" > $OUT"_mtophits.ref"
 remove_duplicate_hits_blast.pl $OUT"_mtophits.ref" $OUT"_mtophits.blast" | rm_blast_dup > $OUT"_singleE.blast"
@@ -66,10 +66,10 @@ else
 	Ct2B_GK_3.pl $OUT"_hybrids_ua.bit_1.fasta-"$OUT"_hybrids_ua.bit_2.fasta.ct" > $OUT"_hybrids_ua.vienna"
 fi
 add_dG_hyb.pl $OUT"_hybrids_ua.hyb" $OUT"_hybrids_ua.vienna" > $OUT"_hybrids_ua_dg.hyb"
-collapse_hyb.sh $OUT"_hybrids_ua_dg.hyb" | filter_homopolymers.awk | hyb_mapped_position_overlaps_3.awk | hyb_chim_types.awk > $OUT".hyb"
+collapse_hyb_2.sh $OUT"_hybrids_ua_dg.hyb" | filter_homopolymers.awk | hyb_mapped_position_overlaps_3.awk | hyb_chim_types.awk > $OUT".hyb"
 awk '$16>=5' $OUT".hyb" > $OUT"_homodimers.hyb"
 # make_nicer_vienna_hOH5.awk $OUT"_hybrids_ua.vienna" > $OUT"_hybrids_ua.viennad"
-hybrid_stats_2 $OUT".hyb" > $OUT"_hybrids.hyb_stats.txt"
+hybrid_stats $OUT".hyb" > $OUT"_hybrids.hyb_stats.txt"
 
 echo "Converted to hyb format."
 

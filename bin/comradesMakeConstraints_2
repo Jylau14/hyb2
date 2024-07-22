@@ -76,3 +76,5 @@ rm *$BIT_2
 #rm $BIT_1"-"$BIT_2".asc"
 rm $FRAGMENT_SCORES
 rm $RANKED_INTERACTIONS
+
+

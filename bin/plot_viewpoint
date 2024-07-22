@@ -63,3 +63,4 @@ fi
 
 rm $GENE_1*".length.txt"
 rm $GENE_1*"_ref.blast"
+
