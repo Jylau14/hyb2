@@ -55,7 +55,7 @@ remove_duplicate_hybrids_hOH5_2.pl PREFER_MIM=1 $OUT"_mtophits.ref" $OUT"_hybrid
 if [ ! -e ${DB/fasta/tab} ]
 then
 	echo "Making database..."
-	make_hyb_db $DB
+	make_hyb_db_2 $DB
 fi
 hyb2fasta_bits_allRNAs.awk ${DB/fasta/tab} $OUT"_hybrids_ua.hyb"
 if [ "$FOLD" == "1" ]
