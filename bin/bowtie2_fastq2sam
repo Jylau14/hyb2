@@ -19,7 +19,7 @@ done
 if [ ! -e ${DB/fasta/tab} ]
 then
         echo "Making database..."
-        make_hyb_db $DB
+        make_hyb_db_2 $DB
 fi
 
 solexa2fasta.awk $IN_FILE | fasta2tab.awk > ${IN_FILE/fastq/tab}
