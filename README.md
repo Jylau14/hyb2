@@ -61,53 +61,21 @@ ant run
 Hyb2 can be downloaded into bin from GitHub with:
 
 ```
-wget https://github.com/Jylau14/hyb2/archive/main.zip
-unzip main.zip
-mv hyb2-main/ hyb2/
-
-# or clone using git:
 git clone https://github.com/Jylau14/hyb2.git
 ```
 
-Add installation location to your PATH:
+Install Hyb2 using:
 
 ```
-export PATH=hyb2/bin:$PATH
+cd hyb2/
+bin/hyb2_install
 ```
 
-Create hyb2 environment on conda:
+On MacOS, install using:
 
 ```
-conda env create -f hyb2.yml
-```
-
-Create hyb2 GUI environment
-
-First on conda:
-
-```
-conda env create -f hyb2_GUI.yml
-```
-
-Then on R:
-
-```
-conda activate hyb2_GUI
-R
-renv::init()
-```
-
-Replace the new renv.lock with hyb2/bin/renv.lock, then run:
-
-```
-renv::restore()
-```
-
-Add hyb2/bin to PATH in R with example directory:
-
-```
-old_path <- Sys.getenv("PATH")
-Sys.setenv(PATH = paste(old_path, "/hyb2/bin", sep = ":"))
+cd hyb2/
+bin/hyb2_install_macOS
 ```
 
 ## Getting Started
