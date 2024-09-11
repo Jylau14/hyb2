@@ -1,0 +1,28 @@
+#!/bin/bash 
+
+# Step 1: Clone the repository and navigate to it
+# git clone https://github.com/Jylau14/hyb2.git 
+# cd hyb2 && /bin/hyb2_install_macOS
+mv bin/environment.yml .
+
+# Step 2: Add hyb2 to PATH
+echo 'export PATH=$PATH:'"$PWD/bin" >> ~/.bashrc
+
+# Step 3: Create and activate the hyb2 conda environments
+conda env create -f bin/hyb2_macOS.yml
+conda env create -f bin/hyb2_GUI_macOS.yml
+source $(conda info --base)/etc/profile.d/conda.sh
+conda activate hyb2_GUI_macOS
+
+# Step 5: Initialize renv (creates a new renv.lock file)
+Rscript -e 'renv::init()'
+
+# Step 6: Replace the new renv.lock with the one in hyb2/bin
+cp bin/renv.lock .
+
+# Step 7: Restore the R environment using renv
+Rscript -e 'renv::restore()'
+
+# Step 8: Add hyb2 to PATH in R
+Rscript -e 'Sys.setenv(PATH=paste(Sys.getenv("PATH"), "'$PWD/bin'", sep=":"))'
+
