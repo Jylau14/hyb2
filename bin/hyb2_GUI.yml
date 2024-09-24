@@ -1,4 +1,4 @@
-name: hyb2_shiny
+name: hyb2_GUI
 channels:
   - bioconda
   - conda-forge
