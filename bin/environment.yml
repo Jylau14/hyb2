@@ -23,4 +23,3 @@ dependencies:
   - viennarna=2.5.1=py37pl5321hf885eb2_0
   - wheel=0.42.0=pyhd8ed1ab_0
   - xz=5.2.6=h775f41a_0
-prefix: /Users/laujianyou/miniconda3/envs/renv-python
