@@ -23,10 +23,11 @@ dependencies:
   - bioconductor-summarizedexperiment=1.10.1=r351_0
   - bioconductor-xvector=0.20.0=r351h470a237_0
   - bioconductor-zlibbioc=1.26.0=r351h470a237_0
+  - bowtie2=2.5.4=hc82d611_4
   - bwidget=1.9.16=h6066b31_0
   - bzip2=1.0.8=h6c40b1e_6
   - c-ares=1.19.1=h6c40b1e_0
-  - ca-certificates=2024.3.11=hecd8cb5_0
+  - ca-certificates=2024.7.2=hecd8cb5_0
   - cairo=1.16.0=h3ce6f7e_5
   - cctools_osx-64=949.0.1=hc7db93f_25
   - clang=14.0.6=hecd8cb5_1
@@ -102,6 +103,7 @@ dependencies:
   - pango=1.50.7=h80fe9ab_0
   - pcre=8.45=h23ab428_0
   - pcre2=10.43=h0ad2156_0
+  - perl=5.34.0=h435f0c2_2
   - pip=24.0=py38hecd8cb5_0
   - pixman=0.43.4=h73e2aa4_0
   - pypy3.8=7.3.11=h856ce2f_0
