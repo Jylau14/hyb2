@@ -20,10 +20,11 @@ hval=0.1
 gmax=4
 hmax=10
 LIMIT=0.95
+ENERGY=1
 FOLD=1
 
 # parsing command line options
-while getopts "i:1:2:o:v:m:h:a:b:q:x:y:l:j:r:" OPTION
+while getopts "i:1:2:o:v:m:h:a:b:q:x:y:l:j:r:e:" OPTION
 do
      case $OPTION in
          i) IN_FILE=$OPTARG ;;
@@ -40,6 +41,7 @@ do
          y) Y_COORD=$OPTARG ;;
          l) LEN=$OPTARG ;;
 	 j) VARNA=$OPTARG ;;
+	 e) ENERGY=$OPTARG ;;
 	 r) FOLD=$OPTARG ;;
          ?)
 
@@ -122,7 +124,7 @@ fi
 #Convert SAM to Hyb Format
 if [ ! -f $OUT".hyb" ]
 then
-	if sam2hyb -i $SAM -d $DB_1 -o $OUT -v $hval -g $gmax -r $FOLD
+	if sam2hyb -i $SAM -d $DB_1 -o $OUT -v $hval -g $gmax -e $ENERGY -r $FOLD
 	then
 		echo "Hyb File Generated."
 	else
