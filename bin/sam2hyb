@@ -69,7 +69,7 @@ add_dG_hyb.pl $OUT"_hybrids_ua.hyb" $OUT"_hybrids_ua.vienna" > $OUT"_hybrids_ua_
 collapse_hyb_2.sh $OUT"_hybrids_ua_dg.hyb" | filter_homopolymers.awk | hyb_mapped_position_overlaps_3.awk | hyb_chim_types.awk > $OUT".hyb"
 awk '$16>=5' $OUT".hyb" > $OUT"_homodimers.hyb"
 # make_nicer_vienna_hOH5.awk $OUT"_hybrids_ua.vienna" > $OUT"_hybrids_ua.viennad"
-hybrid_stats $OUT".hyb" > $OUT"_hybrids.hyb_stats.txt"
+hybrid_stats_2 $OUT".hyb" > $OUT"_hybrids.hyb_stats.txt"
 
 echo "Converted to hyb format."
 
