@@ -5,6 +5,7 @@
 
 use warnings;
 use strict;
+no warnings 'uninitialized';
 my %dGs = ();
 
 my $hyb_nm = $ARGV[0];
