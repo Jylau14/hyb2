@@ -12,11 +12,13 @@ hval=0.1
 gmax=4
 hmax=10
 
+#ENERGY=1 (print predicted folding energy) ENERGY=0 (saves times, doesn't print folding energy)
+ENERGY=1
 #FOLD=1 (ViennaRNA) as default, specify FOLD=0 to use UNAFold
 FOLD=1
 
 # parsing command line options
-while getopts "i:d:o:v:g:h:r:" OPTION
+while getopts "i:d:o:v:g:h:r:e:" OPTION
 do
      case $OPTION in
          i) SAM=$OPTARG ;;
@@ -25,6 +27,7 @@ do
          v) hval=$OPTARG ;;
          g) gmax=$OPTARG;;
          h) hmax=$OPTARG;;
+	 e) ENERGY=$OPTARG ;;
 	 r) FOLD=$OPTARG ;;
 	 ?) 
 
@@ -57,16 +60,22 @@ then
 	echo "Making database..."
 	make_hyb_db_2 $DB
 fi
-hyb2fasta_bits_allRNAs.awk ${DB/fasta/tab} $OUT"_hybrids_ua.hyb"
-if [ "$FOLD" == "1" ]
+if [ "$ENERGY" == "1" ]
 then
-	paste -d "&" $OUT"_hybrids_ua.bit_1.fasta" $OUT"_hybrids_ua.bit_2.fasta" | RNAcofold --noconv --noPS | sed 's/&>/-/g;s/&//g;s/>//g;s/ /\t/g' > $OUT"_hybrids_ua.vienna"
+	hyb2fasta_bits_allRNAs.awk ${DB/fasta/tab} $OUT"_hybrids_ua.hyb"
+	if [ "$FOLD" == "1" ]
+	then
+		paste -d "&" $OUT"_hybrids_ua.bit_1.fasta" $OUT"_hybrids_ua.bit_2.fasta" | RNAcofold --noconv --noPS | sed 's/&>/-/g;s/&//g;s/>//g;s/ /\t/g' > $OUT"_hybrids_ua.vienna"
+	else
+		hybrid-min $OUT"_hybrids_ua.bit_1.fasta" $OUT"_hybrids_ua.bit_2.fasta" 2>&1 > /dev/null
+		Ct2B_GK_3.pl $OUT"_hybrids_ua.bit_1.fasta-"$OUT"_hybrids_ua.bit_2.fasta.ct" > $OUT"_hybrids_ua.vienna"
+	fi
+
+	add_dG_hyb_2.pl $OUT"_hybrids_ua.hyb" $OUT"_hybrids_ua.vienna" > $OUT"_hybrids_ua_dg.hyb"
+	collapse_hyb_2.sh $OUT"_hybrids_ua_dg.hyb" | filter_homopolymers.awk | hyb_mapped_position_overlaps_3.awk | hyb_chim_types.awk > $OUT".hyb"
 else
-	hybrid-min $OUT"_hybrids_ua.bit_1.fasta" $OUT"_hybrids_ua.bit_2.fasta" 2>&1 > /dev/null
-	Ct2B_GK_3.pl $OUT"_hybrids_ua.bit_1.fasta-"$OUT"_hybrids_ua.bit_2.fasta.ct" > $OUT"_hybrids_ua.vienna"
+	collapse_hyb_2.sh $OUT"_hybrids_ua.hyb" | filter_homopolymers.awk | hyb_mapped_position_overlaps_3.awk | hyb_chim_types.awk > $OUT".hyb"
 fi
-add_dG_hyb.pl $OUT"_hybrids_ua.hyb" $OUT"_hybrids_ua.vienna" > $OUT"_hybrids_ua_dg.hyb"
-collapse_hyb_2.sh $OUT"_hybrids_ua_dg.hyb" | filter_homopolymers.awk | hyb_mapped_position_overlaps_3.awk | hyb_chim_types.awk > $OUT".hyb"
 awk '$16>=5' $OUT".hyb" > $OUT"_homodimers.hyb"
 # make_nicer_vienna_hOH5.awk $OUT"_hybrids_ua.vienna" > $OUT"_hybrids_ua.viennad"
 hybrid_stats_2 $OUT".hyb" > $OUT"_hybrids.hyb_stats.txt"
@@ -75,9 +84,13 @@ echo "Converted to hyb format."
 
 #Clear intermediate files
 rm ${SAM/.sam/.filt.sam}
-rm $OUT"_hybrids_ua.bit_1.fasta"*
-rm $OUT*"_hybrids_ua.bit_2.fasta"
-rm $OUT"_TEMP_FILE1_TXT" $OUT"_hybrids_ua.hyb" $OUT"_hybrids_ua.vienna"
+rm $OUT".blast" $OUT"_singleE.blast" $OUT"_singleE.blast_stats.txt"
+rm $OUT"_TEMP_FILE1_TXT" $OUT"_hybrids_ua.hyb" $OUT"_hybrids.hyb"
 rm $OUT"_hybrids.fasta" $OUT"_mtophits.blast" $OUT"_mtophits.ref"
 rm $OUT".temp.blast" $OUT".count.blast" $OUT".collapse.blast"
-rm $OUT"_hybrids.hyb" $OUT"_hybrids_ua_dg.temp.hyb" $OUT"_hybrids_ua_dg.count.hyb" $OUT"_hybrids_ua_dg.hyb"
+if [ "$ENERGY" == "1" ]
+then
+	rm $OUT"_hybrids_ua.bit_1.fasta" $OUT"_hybrids_ua.bit_2.fasta" $OUT"_hybrids_ua.vienna" $OUT"_hybrids_ua_dg.hyb" $OUT"_hybrids_ua_dg.temp.hyb" $OUT"_hybrids_ua_dg.count.hyb"
+else
+	rm $OUT"_hybrids_ua.temp.hyb" $OUT"_hybrids_ua.count.hyb"
+fi
