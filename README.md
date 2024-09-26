@@ -31,28 +31,39 @@ Creates a **GUI to easily select and visualize RNA-RNA interactions** from conta
 ## Prerequisites
 Linux/ Mac Operating System with Miniconda Installed
 
-If Miniconda not installed, read:
+**Miniconda**, if not installed, read:
 
 > https://docs.conda.io/projects/conda/en/latest/user-guide/install/linux.html
 
-blast and bowtie2, if not installed:
+or for MacOS:
+> https://docs.conda.io/projects/conda/en/latest/user-guide/install/macos.html
+
+**Apache Ant**, if not installed, read:
+
+> https://ant.apache.org/manual/install.html
+
+In short, download ant, extract, and add to PATH **(using example directory only, please adjust accordingly)**
 
 ```
-wget https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/LATEST/ncbi-blast-2.14.1+-x64-linux.tar.gz
-tar -zxf ncbi-blast-2.14.1+-x64-linux.tar.gz
-
-wget https://github.com/BenLangmead/bowtie2/releases/download/v2.3.4.3/bowtie2-2.3.4.3-linux-x86_64.zip
-unzip bowtie2-2.3.4.3-linux-x86_64.zip
+export ANT_HOME=/Users/Jylau14/Downloads/apache-ant-1.9.16
+export PATH=$PATH:$ANT_HOME/bin
 ```
-VARNA, if not installed, read:
+
+**VARNA**, if not installed, read:
 
 > https://github.com/yannponty/VARNA
 
-or: 
+and
+> https://github.com/yannponty/VARNA/issues/11
 
 ```
 git clone https://github.com/yannponty/VARNA.git
 cd VARNA
+for f in src/fr/orsay/lri/varna/models/export/{Backbone,Base,BasePair}{Start,End}Command.java
+do
+    iconv -f ISO-8859-1 -t UTF-8 $f > tmp.txt
+    mv tmp.txt $f
+done
 ant compile
 ant jar
 ant run
@@ -79,11 +90,17 @@ bin/hyb2_install_macOS
 ```
 
 ## Getting Started
-To run hyb2 using a fastq/sam input file, type in the command line:
+To run hyb2 using SAM input file, type in the command line, with **your directory of where VARNA is compiled**:
 ```
-hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o run_1 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
+conda activate hyb2
+hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o run_1 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
 ```
-To run the program, the first thing to have is the sequence alignment map (SAM) file or a fastq file. 
+If MacOS:
+```
+conda activate hyb2_macOS
+hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o run_1 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
+```
+To run the program, the first thing to have is the sequence alignment map (SAM) file or a fastq file. Here, we've provided only the SAM file.
 
 If the fastq files from RNA proximity ligation experiments are not mapped to reference sequences, this program contain a function to generate a SAM file using bowtie2.
 
@@ -134,6 +151,8 @@ To get familiar with the command line arguements, it could be broadly explained 
 
 -h max_hits_per_sequence (default value: 10)
 
+-e folding_energy_prediction (default=1 (on)
+
 ### Plotting Contact Density Map
 -a gene_ID_of_interest
 
@@ -150,32 +169,32 @@ To get familiar with the command line arguements, it could be broadly explained 
 
 -j location of VARNAcmd.jar
 
--r toggle interactive mode of VARNA (default=1, off, input 0 for VARNA pop up)
+-r select preferred RNA folding algorithm (default=1 (ViennaRNA), 0 for UNAFold (software not allowed to be distributed here))
 
 ## 
 ### Analysis of short-range intramolecular interactions:
 RNA Structure Folding from 1001-1500nt positions of Zika virus (ZIKV).
 ```
-hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o test_1 -a ZIKV-PE243-2015_virusRNA -x 1001 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
+hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o test_1 -a ZIKV-PE243-2015_virusRNA -x 1001 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
 ```
 ### Analysis of long-range intramolecular interactions:
 RNA Structure Folding of 1001-1500nt positions with 5001-5500nt positions of ZIKV.
 ```
-hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o test_2 -a ZIKV-PE243-2015_virusRNA -x 1001 -y 5001 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
+hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o test_2 -a ZIKV-PE243-2015_virusRNA -x 1001 -y 5001 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
 ```
 ### Analysis of intermolecular interactions:
 RNA Structure Folding of 7501-8000nt positions of ZIKV with 501-550nt positions of 18S rRNA.
 ```
-hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -2 18S.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
+hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -2 18S.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
 ```
 Or if reference sequences are contained in the same file:
 ```
-hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
+hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
 ```
 ### Analysis of homodimer interactions:
 RNA Structure Folding of 3501-3700nt positions of ZIKV with 3501-3700nt positions of a second strand of ZIKV.
 ```
-hyb2 -i testData.fastq/sam -1 Zika_18S.fasta -o test_4 -a ZIKV-PE243-2015_virusRNA -b ZIKV-PE243-2015_virusRNA -x 3501 -y 3501 -l 200 -j ~/VARNA/build/jar/VARNAcmd.jar
+hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o test_4 -a ZIKV-PE243-2015_virusRNA -b ZIKV-PE243-2015_virusRNA -x 3501 -y 3501 -l 200 -j ~/VARNA/build/jar/VARNAcmd.jar
 ```
 ## 
 ### Randomized Parallel RNA Structure Folding
@@ -189,9 +208,15 @@ comradesScore -i test_3_ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_r
 ```
 ##
 ### Graphical User Interface
-To create an interactive interface pop-up window:
+To create an interactive GUI pop-up window:
 ```
 conda activate hyb2_GUI
+
+hyb2_app -i test_1.entire.txt -h test_1.hyb -a ZIKV-PE243-2015_virusRNA -1 Zika_18S.fasta -j ~/VARNA/build/jar/VARNAcmd.jar
+```
+MacOS:
+```
+conda activate hyb2_GUI_macOS
 
 hyb2_app -i test_1.entire.txt -h test_1.hyb -a ZIKV-PE243-2015_virusRNA -1 Zika_18S.fasta -j ~/VARNA/build/jar/VARNAcmd.jar
 ```
