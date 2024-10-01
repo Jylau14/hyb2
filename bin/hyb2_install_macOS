@@ -6,8 +6,8 @@
 mv bin/environment.yml .
 
 # Step 2: Add hyb2 to PATH
-echo 'export PATH=$PATH:'"$PWD/bin" >> ~/.bashrc
-source ~/.bashrc
+echo 'export PATH=$PATH:'"$PWD/bin" >> ~/.zshrc
+source ~/.zshrc
 
 # Step 3: Create and activate the hyb2 conda environments
 echo "Creating hyb2 conda environments"
