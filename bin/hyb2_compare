@@ -101,20 +101,21 @@ similarity_heatmap.R $A1"-"$B1".entire.txt" $LIMIT
 
 #Split coverage map coordinates into individual interactions
 DESeq_interaction_split_select.py $A1"-"$B1 $range
-sed $'s/0\t0\t0.0\t0.0/x\ty\tlog2FoldChange\tpadj/g' $A1"-"$B1*enrichment.txt > $A1"-"$B1".tmp" && mv $A1"-"$B1".tmp" $A1"-"$B1*enrichment.txt
+sed $'s/0\t0\t0.0\t0.0/x\ty\tlog2FoldChange\tpadj/g' $A1"-"$B1"_"$range"range_pos_enrichment.txt" > $A1"-"$B1"_"$range"_pos.tmp" && mv $A1"-"$B1"_"$range"_pos.tmp" $A1"-"$B1"_"$range"range_pos_enrichment.txt"
+sed $'s/0\t0\t0.0\t0.0/x\ty\tlog2FoldChange\tpadj/g' $A1"-"$B1"_"$range"range_neg_enrichment.txt" > $A1"-"$B1"_"$range"_neg.tmp" && mv $A1"-"$B1"_"$range"_neg.tmp" $A1"-"$B1"_"$range"range_neg_enrichment.txt"
 
 #Plot top 10 (lowest padj) zoomed-in coverage density map of the differential interactions
-for f in $A1"-"$B1*enrichment.txt; do awk 'NR>1{print $1-150"\t"$1+150"\t"$2-150"\t"$2+150"\t"$3"\t"$4}' $f | sed '1s/^/x1\tx2\ty1\ty2\tlog2FoldChange\tpadj\n/;s/-.[0-9]\+\t/1\t/;s|\t\t|\t-|g' > ${f/.txt/.heatmap.txt}; done
+for f in $A1"-"$B1"_"$range*enrichment.txt; do awk 'NR>1{print $1-150"\t"$1+150"\t"$2-150"\t"$2+150"\t"$3"\t"$4}' $f | sed '1s/^/x1\tx2\ty1\ty2\tlog2FoldChange\tpadj\n/;s/-.[0-9]\+\t/1\t/;s|\t\t|\t-|g' > ${f/.txt/.heatmap.txt}; done
 
-for f in $A1"-"$B1*enrichment.heatmap.txt; do awk 'NR>1 && NR<12' $f | while read x1 x2 y1 y2 z; do contact_density_map_zoom.R $x1 $x2 $y1 $y2 $LIMIT $A1 $A2 $A3 $A4 $B1 $B2 $B3 $B4; done; done
+for f in $A1"-"$B1"_"$range*enrichment.heatmap.txt; do awk 'NR>1 && NR<12' $f | while read x1 x2 y1 y2 z; do contact_density_map_zoom.R $x1 $x2 $y1 $y2 $LIMIT $A1 $A2 $A3 $A4 $B1 $B2 $B3 $B4; done; done
 
 if [ ! -z $IN_1 ] && [ ! -z $IN_5 ] 
 then
 	awk -v GENE=$GENE '$4~GENE && $10~GENE' $IN_1 $IN_2 $IN_3 $IN_4 > ${IN_1/hyb/pos.hyb}
 	awk -v GENE=$GENE '$4~GENE && $10~GENE' $IN_5 $IN_6 $IN_7 $IN_8 > ${IN_5/hyb/neg.hyb}
 
-	for f in $A1"-"$B1*enrichment.heatmap.txt; do awk '{ if(NR>1 && NR<12 && $1>$3) print $3"\t"$4"\t"$1"\t"$2"\t"$5; else if (NR>1 && NR<12 && $1<$3) print $0}' $f | while read x1 x2 y1 y2 z; do res=$(($y1-$x1)); if [ 300 -gt $res ]; then hyb2_fold -i ${IN_1/hyb/pos.hyb} -a $GENE -1 $FASTA -x $(($x1+1)) -l $(($res+300)) -j $VARNA; else hyb2_fold -i ${IN_1/hyb/pos.hyb} -a $GENE -1 $FASTA -x $(($x1+1)) -y $(($y1+1)) -l 300 -j $VARNA; fi; done; done
-	for f in $A1"-"$B1*enrichment.heatmap.txt; do awk '{ if(NR>1 && NR<12 && $1>$3) print $3"\t"$4"\t"$1"\t"$2"\t"$5; else if (NR>1 && NR<12 && $1<$3) print $0}' $f | while read x1 x2 y1 y2 z; do res=$(($y1-$x1)); if [ 300 -gt $res ]; then hyb2_fold -i ${IN_5/hyb/neg.hyb} -a $GENE -1 $FASTA -x $(($x1+1)) -l $(($res+300)) -j $VARNA; else hyb2_fold -i ${IN_1/hyb/neg.hyb} -a $GENE -1 $FASTA -x $(($x1+1)) -y $(($y1+1)) -l 300 -j $VARNA; fi; done; done
+	for f in $A1"-"$B1"_"$range*enrichment.heatmap.txt; do awk '{ if(NR>1 && NR<12 && $1>$3) print $3"\t"$4"\t"$1"\t"$2"\t"$5; else if (NR>1 && NR<12 && $1<$3) print $0}' $f | while read x1 x2 y1 y2 z; do res=$(($y1-$x1)); if [ 300 -gt $res ]; then hyb2_fold -i ${IN_1/hyb/pos.hyb} -a $GENE -1 $FASTA -x $(($x1+1)) -l $(($res+300)) -j $VARNA; else hyb2_fold -i ${IN_1/hyb/pos.hyb} -a $GENE -1 $FASTA -x $(($x1+1)) -y $(($y1+1)) -l 300 -j $VARNA; fi; done; done
+	for f in $A1"-"$B1"_"$range*enrichment.heatmap.txt; do awk '{ if(NR>1 && NR<12 && $1>$3) print $3"\t"$4"\t"$1"\t"$2"\t"$5; else if (NR>1 && NR<12 && $1<$3) print $0}' $f | while read x1 x2 y1 y2 z; do res=$(($y1-$x1)); if [ 300 -gt $res ]; then hyb2_fold -i ${IN_5/hyb/neg.hyb} -a $GENE -1 $FASTA -x $(($x1+1)) -l $(($res+300)) -j $VARNA; else hyb2_fold -i ${IN_1/hyb/neg.hyb} -a $GENE -1 $FASTA -x $(($x1+1)) -y $(($y1+1)) -l 300 -j $VARNA; fi; done; done
 else
 	echo "Use Options -0 to -9, and -j to Plot RNA Secondary Structures for Enriched Interactions"
 fi
