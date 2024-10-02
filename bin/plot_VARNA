@@ -29,7 +29,7 @@ done
 
 header=$(awk 'FNR==1{print $5}' $IN_FILE)
 colorscores=$(paste -s -d "," $SCORE)
-smax=$(max $SCORE)
+smax=$(sort -nr $SCORE | head -n1)
 colorStyle=$(echo $smax | awk '{print "0.00:#FFFFFF,"$1*0.2":#4747FF,"$1*0.55":#1CFF47,"$1*0.65":#FFFF47,"$1*0.9":#FF4747,"$1":#B64747"}')
 
 if [ "$INTERACTIVE" = "1" ]
@@ -40,10 +40,10 @@ else
 	java -jar $VARNA -i $IN_FILE -bpStyle simple -colorMap $colorscores -colorMapMin "0" -colorMapMax "$smax" -colorMapStyle "$colorStyle" -title "$header" -spaceBetweenBases "0.6" -o ${IN_FILE/ct/svg}
 	if [ -z $Y_COORD ]
 	then
-		svg_mod_coord.sh -i ${IN_FILE/ct/svg} -x $X_COORD -l $LEN -p ${SCORE%%_*txt}
+		svg_mod_coord.sh -i ${IN_FILE/ct/svg} -x $X_COORD -l $LEN -p ${SCORE%%__*txt}
 		rm ${IN_FILE/ct/svg}
 	else
-        	svg_mod_coord.sh -i ${IN_FILE/ct/svg} -x $X_COORD -y $Y_COORD -l $LEN -p ${SCORE%%_*txt}
+        	svg_mod_coord.sh -i ${IN_FILE/ct/svg} -x $X_COORD -y $Y_COORD -l $LEN -p ${SCORE%%__*txt}
 		rm ${IN_FILE/ct/svg}
 	fi
 fi
