@@ -29,4 +29,7 @@ Rscript -e 'renv::restore()'
 # Step 8: Add hyb2 to PATH in R
 Rscript -e 'Sys.setenv(PATH=paste(Sys.getenv("PATH"), "'$PWD/bin'", sep=":"))'
 
+cp -r renv ~/
+cp bin/hyb2_shiny.R ~/
+
 echo "Hyb2 Installation Complete"
