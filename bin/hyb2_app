@@ -20,6 +20,18 @@ do
      esac
 done
 
+r_dir="renv/"
+if [ ! -d "${r_dir}" ]
+then
+    cp -r ~/renv .
+fi
+if [ ! -f .Rprofile ]
+then 
+    echo 'source("renv/activate.R")' > .Rprofile
+fi
+
+cp ~/hyb2_shiny.R .
+
 if [ -z $GENE2 ] && [ -z $FASTA2 ]
 then
 	Rscript -e 'shiny::runApp("hyb2_shiny.R", launch.browser=TRUE)' $INPUT $HYB $GENE $FASTA $VARNA $GENE $FASTA
@@ -32,3 +44,5 @@ then
 else
 	echo "Something went wrong! Check input arguments."
 fi
+
+rm .Rprofile
