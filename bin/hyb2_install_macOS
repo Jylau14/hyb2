@@ -12,9 +12,8 @@ source ~/.zshrc
 # Step 3: Create and activate the hyb2 conda environments
 echo "Creating hyb2 conda environments"
 conda env create -f bin/hyb2_macOS.yml
-conda env create -f bin/hyb2_GUI_macOS.yml
 source $(conda info --base)/etc/profile.d/conda.sh
-conda activate hyb2_GUI_macOS
+conda activate hyb2_macOS
 
 # Step 5: Initialize renv (creates a new renv.lock file)
 echo "Ignore warnings: package(s) were not installed successfully, reinstall before snapshotting the lockfile."
