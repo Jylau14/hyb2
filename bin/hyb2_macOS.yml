@@ -1,4 +1,4 @@
-ame: hyb2_macOS
+name: hyb2_macOS
 channels:
   - anaconda
   - conda-forge
