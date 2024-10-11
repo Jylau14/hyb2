@@ -34,9 +34,9 @@ dependencies:
   - bwidget=1.9.14
   - bzip2=1.0.8
   - c-ares=1.18.1
-  - ca-certificates=2024.2.2
+  - ca-certificates=2024.8.30
   - cairo=1.16.0
-  - certifi=2020.6.20
+  - certifi=2021.5.30
   - curl=7.82.0
   - expat=2.4.7
   - font-ttf-dejavu-sans-mono=2.37
@@ -44,6 +44,7 @@ dependencies:
   - font-ttf-source-code-pro=2.038
   - font-ttf-ubuntu=0.83
   - fontconfig=2.13.96
+  - fonts-anaconda=1
   - fonts-conda-ecosystem=1
   - fonts-conda-forge=1
   - freetype=2.10.4
@@ -54,7 +55,7 @@ dependencies:
   - gfortran_impl_linux-64=10.3.0
   - gfortran_linux-64=10.3.0
   - graphite2=1.3.13
-  - gsl=2.7
+  - gsl=2.7.1
   - gxx_impl_linux-64=10.3.0
   - gxx_linux-64=10.3.0
   - harfbuzz=4.1.0
@@ -99,7 +100,7 @@ dependencies:
   - make=4.3
   - ncurses=6.3
   - numpy=1.19.5
-  - openssl=1.1.1n
+  - openssl=1.1.1o
   - pandas=1.1.3
   - pango=1.50.6
   - pcre=8.45
@@ -147,6 +148,7 @@ dependencies:
   - r-glue=1.6.2
   - r-gridextra=2.3
   - r-gtable=0.3.0
+  - r-here=1.0.1
   - r-httr=1.4.2
   - r-isoband=0.2.5
   - r-jsonlite=1.8.0
@@ -175,11 +177,15 @@ dependencies:
   - r-ps=1.6.0
   - r-purrr=0.3.4
   - r-r6=2.5.1
+  - r-rappdirs=0.3.3
   - r-rcolorbrewer=1.1_2
   - r-rcpp=1.0.8.3
   - r-rcpparmadillo=0.10.8.1.0
+  - r-rcpptoml=0.1.7
   - r-rcurl=1.98_1.6
   - r-rematch2=2.1.2
+  - r-renv=0.17.3
+  - r-reticulate=1.25
   - r-rlang=1.0.2
   - r-rprojroot=2.0.2
   - r-rsqlite=2.2.8
@@ -198,7 +204,7 @@ dependencies:
   - r-withr=2.5.0
   - r-xml=3.99_0.9
   - r-xtable=1.8_4
-  - readline=8.1
+  - readline=8.1.2
   - sed=4.8
   - setuptools=49.6.0
   - six=1.15.0
