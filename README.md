@@ -55,6 +55,10 @@ bin/hyb2_install
 # On MacOS, install using:
 cd hyb2/
 bin/hyb2_install_macOS
+
+# On MacOS-ARM, use:
+cd hyb2/
+bin/hyb2_install_macOS-arm
 ```
 
 ## Getting Started
@@ -62,10 +66,15 @@ To run hyb2 using SAM input file, type in the command line:
 ```bash
 # Linux:
 conda activate hyb2
-hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o run_1 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 
 
 # MacOS:
 conda activate hyb2_macOS
+
+# MacOS-ARM:
+conda activate hyb2_macOS-arm
+```
+After activating environment:
+```bash
 hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o run_1 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 
 ```
 To run the program, the first thing to have is the sequence alignment map (SAM) file or a fastq file. Here, we've provided only the SAM file.
