@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 #changes from sam2blast: adds extra column of mapped sequence
 #changes from sam2blast_2: adapted python3 syntax
 """

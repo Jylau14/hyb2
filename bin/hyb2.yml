@@ -31,6 +31,7 @@ dependencies:
   - bioconductor-summarizedexperiment=1.24.0
   - bioconductor-xvector=0.34.0
   - bioconductor-zlibbioc=1.40.0
+  - bowtie2=2.4.5
   - bwidget=1.9.14
   - bzip2=1.0.8
   - c-ares=1.18.1
@@ -210,6 +211,7 @@ dependencies:
   - six=1.15.0
   - sqlite=3.37.1
   - sysroot_linux-64=2.12
+  - tbb=2020.2
   - tk=8.6.12
   - tktable=2.10
   - viennarna=2.5.0
