@@ -17,6 +17,7 @@
 #FOLD=1, ViennaRNA, 0 for UNAFold
 
 FOLD=1
+VARNA=$(VARNAcmd.sh)
 
 # parsing command line options
 while getopts "i:a:b:1:2:x:y:l:j:0:r:" OPTION

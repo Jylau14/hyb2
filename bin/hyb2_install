@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Step 1: Clone the repository and navigate to it
-# git clone https://github.com/Jylau14/hyb2.git
-# cd hyb2 && /bin/hyb2_install
+# Step 1: Move file and set VARNAcmd.jar path
 mv bin/environment.yml .
+echo "$PWD"/VARNA/build/jar/VARNAcmd.jar > bin/VARNA.dir
+echo 'cat '"$PWD"/bin/VARNA.dir >> bin/VARNAcmd.sh
 
 # Step 2: Add hyb2 to PATH
 export PATH=$PATH:$PWD/bin

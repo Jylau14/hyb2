@@ -5,6 +5,8 @@
 # plot_VARNA -i NORAD_2631-3400.fasta292.ct -s Nr-all.NORAD-NORAD__NORAD_2631-3400.fasta292.VARNA_log2scores.txt -j ~/bin/VARNA/build/jar/VARNAcmd.jar
 # -t 1, VARNA interactive mode (pop-up)
 
+VARNA=$(VARNAcmd.sh)
+
 # parsing command line options
 while getopts "i:s:j:x:y:l:i:0:" OPTION
 do

@@ -22,6 +22,7 @@ hmax=10
 LIMIT=0.95
 ENERGY=1
 FOLD=1
+VARNA=$(VARNAcmd.sh)
 
 # parsing command line options
 while getopts "i:1:2:o:v:m:h:a:b:q:x:y:l:j:r:e:" OPTION
