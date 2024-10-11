@@ -15,7 +15,7 @@ conda env create -f bin/hyb2_macOS-arm.yml
 source $(conda info --base)/etc/profile.d/conda.sh
 conda activate hyb2_macOS-arm
 R -e "options(repos = c(CRAN = 'https://cloud.r-project.org')); install.packages('BiocManager')"
-R -e “BiocManager::install(‘DESeq2’)”
+R -e “BiocManager::install('DESeq2')”
 
 # Step 5: Initialize renv (creates a new renv.lock file)
 echo "Ignore warnings: package(s) were not installed successfully, reinstall before snapshotting the lockfile."
