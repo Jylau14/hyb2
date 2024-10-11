@@ -10,9 +10,8 @@ export PATH=$PATH:$PWD/bin
 
 # Step 3: Create and activate the hyb2 conda environments
 conda env create -f bin/hyb2.yml
-conda env create -f bin/hyb2_GUI.yml
 source $(conda info --base)/etc/profile.d/conda.sh
-conda activate hyb2_GUI
+conda activate hyb2
 
 # Step 5: Initialize renv (creates a new renv.lock file)
 Rscript -e 'renv::init()'
