@@ -1,1 +1,2 @@
 ### Compiled VARNA from https://github.com/yannponty/VARNA
+### Skips the requirement to download Apache-Ant and fixing error: https://github.com/yannponty/VARNA/issues/11 
