@@ -37,57 +37,18 @@ Linux/ Mac Operating System with Miniconda Installed
 > 
 > https://docs.conda.io/projects/conda/en/latest/user-guide/install/macos.html
 
-2. **Apache Ant**, if not installed, read:
-
-> https://ant.apache.org/manual/install.html
-
-In short, download ant, extract, and add to PATH **(using example directory only, please adjust accordingly)**
-```bash
-# Download and extract Ant to your chosen directory:
-   tar -xzf ~/Downloads/apache-ant-<version>-bin.tar.gz -C <your-directory>
-
-# Set the `ANT_HOME` environment variable:
-   export ANT_HOME=<your-directory>/apache-ant-<version>
-
-# Add Ant to your `PATH` (add this to `~/.bashrc`, `~/.zshrc`, or equivalent):
-   export PATH=$ANT_HOME/bin:$PATH
-
-# Verify the installation:
-   ant -version
-```
-3. **Java Development Kit (JDK)** is required to run Apache-Ant:
+2. **Java** or **Java Development Kit (JDK)**:
 
 Download the appropriate version based on your OS, locate the file, then install by double-clicking:
-> https://www.oracle.com/java/technologies/downloads/#java21
+> https://www.oracle.com/java/technologies/downloads
 
-
-4. Lastly, **VARNA**, if not installed, read:
-
-> https://github.com/yannponty/VARNA and
-> https://github.com/yannponty/VARNA/issues/11
-
-```bash
-git clone https://github.com/yannponty/VARNA.git
-cd VARNA
-for f in src/fr/orsay/lri/varna/models/export/{Backbone,Base,BasePair}{Start,End}Command.java
-do
-    iconv -f ISO-8859-1 -t UTF-8 $f > tmp.txt
-    mv tmp.txt $f
-done
-ant compile
-ant jar
-ant run
-```
 ## Installation
-Hyb2 can be downloaded into bin from GitHub with:
+Hyb2 can be downloaded and installed with:
 
 ```bash
 git clone https://github.com/Jylau14/hyb2.git
-```
 
-Install Hyb2 using:
-
-```bash
+# Install Hyb2 on Linux:
 cd hyb2/
 bin/hyb2_install
 
@@ -97,14 +58,15 @@ bin/hyb2_install_macOS
 ```
 
 ## Getting Started
-To run hyb2 using SAM input file, type in the command line, with **your directory of where VARNA is compiled**:
+To run hyb2 using SAM input file, type in the command line:
 ```bash
+# Linux:
 conda activate hyb2
-hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o run_1 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
+hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o run_1 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 
 
 # MacOS:
 conda activate hyb2_macOS
-hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o run_1 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
+hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o run_1 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 
 ```
 To run the program, the first thing to have is the sequence alignment map (SAM) file or a fastq file. Here, we've provided only the SAM file.
 
@@ -136,6 +98,7 @@ Or see:
 Hyb2 environment needs to be activated for essential softwares.
 
 ```bash
+# Linux:
 conda activate hyb2
 
 # MacOS:
@@ -182,27 +145,27 @@ To get familiar with the command line arguements, it could be broadly explained 
 
 ## 
 ### Analysis of short-range intramolecular interactions:
-RNA Structure Folding from 1001-1500nt positions of Zika virus (ZIKV). Specify **your** VARNA directory.
+RNA Structure Folding from 1001-1500nt positions of Zika virus (ZIKV).
 ```bash
-hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o test_1 -a ZIKV-PE243-2015_virusRNA -x 1001 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
+hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o test_1 -a ZIKV-PE243-2015_virusRNA -x 1001 -l 500
 ```
 ### Analysis of long-range intramolecular interactions:
-RNA Structure Folding of 1001-1500nt positions with 5001-5500nt positions of ZIKV. Specify **your** VARNA directory.
+RNA Structure Folding of 1001-1500nt positions with 5001-5500nt positions of ZIKV.
 ```bash
-hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o test_2 -a ZIKV-PE243-2015_virusRNA -x 1001 -y 5001 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
+hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o test_2 -a ZIKV-PE243-2015_virusRNA -x 1001 -y 5001 -l 500
 ```
 ### Analysis of intermolecular interactions:
-RNA Structure Folding of 7501-8000nt positions of ZIKV with 501-550nt positions of 18S rRNA. Specify **your** VARNA directory.
+RNA Structure Folding of 7501-8000nt positions of ZIKV with 501-550nt positions of 18S rRNA.
 ```bash
-hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -2 18S.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
+hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -2 18S.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 
 
 # If reference sequences are contained in the same file you can use:
-hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 -j ~/VARNA/build/jar/VARNAcmd.jar
+hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 
 ```
 ### Analysis of homodimer interactions:
-RNA Structure Folding of 3501-3700nt positions of ZIKV with 3501-3700nt positions of a second strand of ZIKV. Specify **your** VARNA directory.
+RNA Structure Folding of 3501-3700nt positions of ZIKV with 3501-3700nt positions of a second strand of ZIKV. 
 ```bash
-hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o test_4 -a ZIKV-PE243-2015_virusRNA -b ZIKV-PE243-2015_virusRNA -x 3501 -y 3501 -l 200 -j ~/VARNA/build/jar/VARNAcmd.jar
+hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o test_4 -a ZIKV-PE243-2015_virusRNA -b ZIKV-PE243-2015_virusRNA -x 3501 -y 3501 -l 200 
 ```
 ## 
 ### Randomized Parallel RNA Structure Folding
@@ -220,12 +183,12 @@ To create an interactive GUI pop-up window:
 ```bash
 conda activate hyb2
 
-hyb2_app -i test_1.entire.txt -h test_1.hyb -a ZIKV-PE243-2015_virusRNA -1 Zika_18S.fasta -j ~/VARNA/build/jar/VARNAcmd.jar
+hyb2_app -i test_1.entire.txt -h test_1.hyb -a ZIKV-PE243-2015_virusRNA -1 Zika_18S.fasta 
 
 # MacOS:
 conda activate hyb2_macOS
 
-hyb2_app -i test_1.entire.txt -h test_1.hyb -a ZIKV-PE243-2015_virusRNA -1 Zika_18S.fasta -j ~/VARNA/build/jar/VARNAcmd.jar
+hyb2_app -i test_1.entire.txt -h test_1.hyb -a ZIKV-PE243-2015_virusRNA -1 Zika_18S.fasta 
 ```
 ##
 ### Differential Coverage Map and Similarity Heatmap
@@ -239,7 +202,7 @@ The input files for **hyb2_compare** comes from outputs of the main hyb2 pipelin
 
 For example, to identify the differences and similarities between control and experimental conditions:
 ```bash
-hyb2_compare -a control_rep1.entire.txt -b control_rep2.entire.txt -c control_rep3.entire.txt -d control_rep4.entire.txt -i exp_rep1.entire.txt -j exp_rep2.entire.txt -k exp_rep3.entire.txt -l exp_rep4.entire.txt -1 control_rep1.hyb -2 control_rep2.hyb -3 control_rep3.hyb -4 control_rep4.hyb -5 exp_rep1.hyb -6 exp_rep2.hyb -7 exp_rep3.hyb -8 exp_rep4.hyb -0 GENE_NAME -9 ref.fasta -v ~/VARNA/build/jar/VARNAcmd.jar
+hyb2_compare -a control_rep1.entire.txt -b control_rep2.entire.txt -c control_rep3.entire.txt -d control_rep4.entire.txt -i exp_rep1.entire.txt -j exp_rep2.entire.txt -k exp_rep3.entire.txt -l exp_rep4.entire.txt -1 control_rep1.hyb -2 control_rep2.hyb -3 control_rep3.hyb -4 control_rep4.hyb -5 exp_rep1.hyb -6 exp_rep2.hyb -7 exp_rep3.hyb -8 exp_rep4.hyb -0 GENE_NAME -9 ref.fasta 
 ```
 The automatic plotting of RNA structures can be skipped by omitting some options, and with the command:
 ```
