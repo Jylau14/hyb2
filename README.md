@@ -112,6 +112,9 @@ conda activate hyb2
 
 # MacOS:
 conda activate hyb2_macOS
+
+# MacOS-ARM:
+conda activate hyb2_macOS-arm
 ```
 **Hyb2**
 
@@ -199,7 +202,7 @@ conda activate hyb2_macOS
 # MacOS-ARM:
 conda activate hyb2_macOS-arm
 
-hyb2_app -i test_1.entire.txt -h test_1.hyb -a ZIKV-PE243-2015_virusRNA -1 Zika_18S_formatted.fasta
+hyb2_app -i test_1_ZIKV-PE243-2015_virusRNA.entire.txt -h test_1.hyb -a ZIKV-PE243-2015_virusRNA -1 Zika_18S_formatted.fasta
 ```
 ##
 ### Differential Coverage Map and Similarity Heatmap
@@ -210,6 +213,8 @@ To find the conservations between 2 experiments, we look for overlapping interac
 Up to 4 replicates for each experiment can be used as input, with a minimum of 2.
 
 The input files for **hyb2_compare** comes from outputs of the main hyb2 pipeline **(*entire.txt)**.
+
+**MacOS-ARM cannot use hyb2_compare. Several packages in DESeq2 not supported in ARM architecture.**
 
 For example, to identify the differences and similarities between control and experimental conditions:
 ```bash
