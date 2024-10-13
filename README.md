@@ -12,6 +12,14 @@ A ***streamlined*** program for analyzing proximity ligation experiments from ma
   <img src="https://github.com/Jylau14/hyb2/assets/110675091/7121ebda-6b16-444c-b07c-483ee595adb7" height="500" width="700">
 </p>
 
+## Table of Contents
+- [Introduction](#introduction)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Getting Started](#getting-started)
+- [Running the Program](#running-the-program)
+- [How To Read Outputs](#how-to-read-outputs)
+
 ## Introduction
 RNA adopts ensemble of structures essential for life such as splicing, gene expression, and virus replication. 
 It adopts complex secondary structures supported by short-, long-range base-pairing interactions and tertiary structures supported by long-range interactions, pseudoknots, base triples, and RBPs. 
