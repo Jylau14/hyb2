@@ -6,8 +6,31 @@ echo "$PWD"/VARNA/build/jar/VARNAcmd.jar > bin/VARNA.dir
 echo 'cat '"$PWD"/bin/VARNA.dir >> bin/VARNAcmd.sh
 
 # Step 2: Add hyb2 to PATH
-echo 'export PATH=$PATH:'"$PWD/bin" >> ~/.zshrc
-source ~/.zshrc
+# echo 'export PATH=$PATH:'"$PWD/bin" >> ~/.zshrc
+# source ~/.zshrc
+
+# Function to source the appropriate configuration file and export a new PATH
+source_config_file() {
+    case "$SHELL" in
+        */zsh)
+            echo 'export PATH=$PATH:'"$PWD/bin" >> ~/.zshrc
+            echo "Sourcing .zshrc"
+            source ~/.zshrc
+            ;;
+        */bash)
+            echo 'export PATH=$PATH:'"$PWD/bin" >> ~/.bashrc
+            echo "Sourcing .bash_profile or .bashrc"
+            if [ -f ~/.bashrc ]; then
+                source ~/.bashrc
+            fi
+            ;;
+        *)
+            echo "Unknown shell: $SHELL. Please source the correct configuration file manually to export to PATH."
+            ;;
+    esac
+}
+
+source_config_file
 
 # Step 3: Create and activate the hyb2 conda environments
 echo "Creating hyb2 conda environments"
@@ -33,6 +56,6 @@ Rscript -e 'Sys.setenv(PATH=paste(Sys.getenv("PATH"), "'$PWD/bin'", sep=":"))'
 
 cp -r renv ~/
 cp bin/hyb2_shiny.R ~/
+rm .Rprofile
 
-source ~/.zshrc
 echo "Hyb2 Installation Complete"
