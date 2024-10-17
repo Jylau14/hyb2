@@ -201,16 +201,7 @@ comradesScore -i test_3_ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_r
 ### Graphical User Interface
 To create an interactive GUI pop-up window:
 ```bash
-# Linux
-conda activate hyb2
-
-# MacOS:
-conda activate hyb2_macOS
-
-# MacOS-ARM:
-conda activate hyb2_macOS-arm
-
-hyb2_app -i test_1_ZIKV-PE243-2015_virusRNA.entire.txt -h test_1.hyb -a ZIKV-PE243-2015_virusRNA -1 Zika_18S_formatted.fasta
+hyb2_app -i test_1.ZIKV-PE243-2015_virusRNA.entire.txt -h test_1.hyb -a ZIKV-PE243-2015_virusRNA -1 Zika_18S_formatted.fasta
 ```
 ##
 ### Differential Coverage Map and Similarity Heatmap
