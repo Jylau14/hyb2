@@ -65,12 +65,12 @@ fi
 
 WC=`cat $SHUFFLED_CONSTRAINTS | wc -l`
 
-echo "Fitting constraints, ERROR messages accepted."
+# echo "Fitting constraints, ERROR messages accepted."
 
 for (( i=1; i<=$WC; i++ )); do
       awk -v curr=$CURRENT_CONSTRAINTS -v i=$i 'NR==i{print $0 >> curr}' $SHUFFLED_CONSTRAINTS
       if [ "$FOLD" == "1" ]; then
-            cat $IN_FASTA$SGE_TASK_ID | RNAfold --noconv --noPS --commands=$CURRENT_CONSTRAINTS | sed 's/&>/-/g;s/&//g' | b2ct | sed 's/ENERGY =/dG =/g' > $CT_OUTPUT 
+            cat $IN_FASTA$SGE_TASK_ID | RNAfold --noconv --noPS --commands=$CURRENT_CONSTRAINTS | sed 's/&>/-/g;s/&//g' | b2ct | sed 's/ENERGY =/dG =/g' > $CT_OUTPUT 2>&1 > /dev/null
       else
             hybrid-ss-min -c $IN_FASTA$SGE_TASK_ID
       fi
