@@ -29,6 +29,6 @@ else if($4==$10 && $7<$13 && $8==$13)
 else if($4==$10 && $7==$14 && $8>$14)
         print $0"\t" "Type_13"
 else if($4!=$10)
-	print $0"\t" "."
+	print $0"\t" "Intermolecular"
 }
 

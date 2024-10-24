@@ -14,12 +14,14 @@ source_config_file() {
     case "$SHELL" in
         */zsh)
             echo 'export PATH=$PATH:'"$PWD/bin" >> ~/.zshrc
+            echo 'alias Hyb2='"$PWD" >> ~/.zshrc
             echo "Sourcing .zshrc"
             source ~/.zshrc
             ;;
         */bash)
             echo 'export PATH=$PATH:'"$PWD/bin" >> ~/.bashrc
-            echo "Sourcing .bash_profile or .bashrc"
+            echo 'alias Hyb2='"$PWD" >> ~/.bashrc
+            echo "Sourcing .bashrc"
             if [ -f ~/.bashrc ]; then
                 source ~/.bashrc
             fi

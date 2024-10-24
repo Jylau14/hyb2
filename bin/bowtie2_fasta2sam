@@ -19,7 +19,7 @@ done
 if [ ! -e ${DB/fasta/tab} ]
 then
         echo "Making database..."
-        make_hyb_db_2 $DB
+        make_hyb_db_2 $DB 2>&1 > /dev/null
 fi
 
 echo "Bowtie2 Mapping..."

@@ -11,7 +11,7 @@ TITLE <- as.character(args[5])
 # read data
 data <- data.table::fread(INPUT,header=T,sep="\t")
 # colnames(data) <- c("x", "y", "count")
-data$ID <- gsub(pattern="\\.entire.txt$","",INPUT)
+data$ID <- gsub(pattern="\\.contact.txt$","",INPUT)
 quant <- quantile(data$count, probs=LIMIT)
 data$count2 <- ifelse(data$count > quant, quant, data$count)
 Title <- ifelse(!is.na(TITLE), TITLE, data$ID[1])

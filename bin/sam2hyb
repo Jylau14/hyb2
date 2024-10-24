@@ -40,26 +40,26 @@ done
 echo "Processing SAM file..."
 
 #Filtering and transforming input SAM file
-sam_filt $SAM > ${SAM/.sam/.filt.sam}
+#sam_filt $SAM > ${SAM/.sam/.filt.sam}
 
 #Scoring and converting filtered SAM file to blast format, collapse same sequence reads, filter for high confidence reads, remove duplicates, and compile into hyb format with fasta sequence for each entry, coordinates, and score
-sam2blast_3 ${SAM/.sam/.filt.sam} > $OUT".blast"
+sam2blast_3 $SAM > $OUT".blast"
 collapse_blast_2.sh $OUT".blast" > $OUT".collapse.blast"
 mtophits_blast $OUT".collapse.blast" > $OUT"_mtophits.blast"
 create_reference_file.pl $OUT"_mtophits.blast" > $OUT"_mtophits.ref"
 remove_duplicate_hits_blast.pl $OUT"_mtophits.ref" $OUT"_mtophits.blast" | rm_blast_dup > $OUT"_singleE.blast"
 blast_stats_2 $OUT"_singleE.blast" > $OUT"_singleE.blast_stats.txt"
 get_mtop_hybrids.pl BLAST_THRESHOLD=$hval MODE=2 MAX_OVERLAP=$gmax MAX_HITS_PER_SEQUENCE=$hmax OUTPUT_FORMAT=HYB $OUT".blast" > $OUT"_TEMP_FILE1_TXT"
-getseqs_sam $OUT"_TEMP_FILE1_TXT" ${SAM/.sam/.filt.sam} > $OUT"_hybrids.fasta" 
+getseqs_sam $OUT"_TEMP_FILE1_TXT" $SAM > $OUT"_hybrids.fasta" 
 txt2hyb.awk $OUT"_hybrids.fasta" $OUT"_TEMP_FILE1_TXT" > $OUT"_hybrids.hyb"
 remove_duplicate_hybrids_hOH5_2.pl PREFER_MIM=1 $OUT"_mtophits.ref" $OUT"_hybrids.hyb" > $OUT"_hybrids_ua.hyb"
 
 #Create database using input fasta file, calculate folding energy for each entry in hyb file, and collapse same sequence reads
-if [ ! -e ${DB/fasta/tab} ]
-then
-	echo "Making database..."
-	make_hyb_db_2 $DB
-fi
+#if [ ! -e ${DB/fasta/tab} ]
+#then
+#	echo "Making database..."
+#	make_hyb_db_2 $DB 2>&1 > /dev/null
+#fi
 if [ "$ENERGY" == "1" ]
 then
 	hyb2fasta_bits_allRNAs.awk ${DB/fasta/tab} $OUT"_hybrids_ua.hyb"
@@ -83,7 +83,7 @@ hybrid_stats_2 $OUT".hyb" > $OUT"_hybrids.hyb_stats.txt"
 echo "Converted to hyb format."
 
 #Clear intermediate files
-rm ${SAM/.sam/.filt.sam}
+#rm ${SAM/.sam/.filt.sam}
 rm $OUT".blast" $OUT"_singleE.blast" $OUT"_singleE.blast_stats.txt"
 rm $OUT"_TEMP_FILE1_TXT" $OUT"_hybrids_ua.hyb" $OUT"_hybrids.hyb"
 rm $OUT"_hybrids.fasta" $OUT"_mtophits.blast" $OUT"_mtophits.ref"

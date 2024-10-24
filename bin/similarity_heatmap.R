@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 #plots contact density map from 1 input
-#run on terminal contact_density_map_indiv.R input_entire.txt upper_quantile(0.95) plot_title
+#run on terminal contact_density_map_indiv.R input.contact.txt upper_quantile(0.95) plot_title
 library(ggplot2)
 library(data.table)
 args <- commandArgs(trailingOnly = TRUE)
@@ -13,7 +13,7 @@ data <- data.table::fread(INPUT,header=T,sep="\t")
 # colnames(data) <- c("x", "y", "count")
 
 # set ID name, upper quantile limit
-data$ID <- gsub(pattern="\\.entire.txt$","",INPUT)
+data$ID <- gsub(pattern="\\.contact.txt$","",INPUT)
 quant <- quantile(data$count, probs=LIMIT)
 data$count2 <- ifelse(data$count > quant, quant, data$count)
 Title <- ifelse(!is.na(TITLE), TITLE, data$ID[1])
@@ -26,7 +26,7 @@ cdm <- ggplot(data, aes(x,y))+
                                 label.position = "left", label.theme = element_text(angle = 270, size = 9), label.vjust = 0, label.hjust = 0.5))+
   scale_fill_gradient(na.value ="#ffffff", low = "#ffffff",high="forestgreen")+
   theme_bw()+theme(aspect.ratio = 1)+
-  labs(title="Similarity Heatmap", subtitle = Title,x="3'-5' Chimera (nt)",y="5'-3' Chimera (nt)")+
+  labs(title="Similarity Heatmap", subtitle = Title,x="Arm 1 (nt)",y="Arm 2 (nt)")+
   scale_x_continuous(expand = c(0, 0), limits = c(0, max(data$x)+10))+
   scale_y_continuous(expand = c(0, 0), limits = c(0, max(data$x)+10))+
   theme(plot.title=element_text(size=10),plot.subtitle=element_text(size=10),text=element_text(size=9.5), axis.text=element_text(size=9))+

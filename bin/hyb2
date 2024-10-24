@@ -20,17 +20,81 @@ hval=0.1
 gmax=4
 hmax=10
 LIMIT=0.95
-ENERGY=1
+ENERGY=0
 FOLD=1
 VARNA=$(VARNAcmd.sh)
 
+# Help message function
+print_help() {
+    echo "No Options Specified!"
+    echo "Usage:"
+    echo "To run hyb2, make sure you've activated the conda environment:"
+    echo "conda activate <hyb2/hyb2_macOS/hyb2_macOS-arm>"
+    echo "hyb2 -i <Input.Fastq/SAM> -d <Fasta_File> -o <Output_ID> -a <GENE_ID_1> -x <START_COORD_1> -y <START_COORD_2> -l <Length_of_Fragments>"
+    echo "Options:"
+    echo "  -i   Input Fastq/SAM file"
+    echo "  -d   Fasta file used for mapping"
+    echo "  -o   Output ID"
+    echo "  -v   BLAST threshold (default=0.1)"
+    echo "  -m   Maximum overlap (default=4)"
+    echo "  -h   Maximum hits per sequence (default=10)"
+    echo "  -a   Gene ID of interest"
+    echo "  -b   Second gene ID of interest (if different)"
+    echo "  -q   Upper limit for heatmap chimeric count (default=0.95)"
+    echo "  -x   Start coordinate of 1st strand/gene for zoomed-in contact and folding"
+    echo "  -y   Start coordinate of 2nd strand/gene for zoomed-in contact and folding"
+    echo "  -l   Length of fragments for zoomed-in contact and folding"
+    echo "  -j   Directory of VARNAcmd.jar (default set when installing hyb2)"
+    echo "  -e   Calculate Folding Energy: 1 to calculate, 0 to skip and save on runtime (default=0)"
+    echo "  -r   Folding Algorithm: 1 for ViennaRNA, 0 for UNAFold (if installed separately) (default=1)"
+    echo " "
+    echo "To only plot contact density map after generating hyb output:"
+    echo "hyb2 -i <Output.hyb> -a <GENE_ID_1>"
+    echo "Or:"
+    echo "hyb2_coverage -i <Output.hyb> -a <GENE_ID_1> -w <X_COORD_1> -x <X_COORD_2> -y <Y_COORD_1> -z <Y_COORD_2>"
+    echo "  -i   Output.hyb from running hyb2"
+    echo "  -a   Gene ID of interest"
+    echo "  -b   Second gene ID of interest (if different)"
+    echo "  -q   Upper limit for heatmap chimeric count (default=0.95)"
+    echo "  -w   Start coordinate of x1 for zoomed-in contact"
+    echo "  -x   Start coordinate of x2 for zoomed-in contact"
+    echo "  -y   Start coordinate of y1 for zoomed-in contact (or 2nd gene coord_1 if -b)"
+    echo "  -z   Start coordinate of y2 for zoomed-in contact (or 2nd gene coord_2 if -b)"
+    echo " "
+    echo "To only fold RNA structures:"
+    echo "hyb2_fold -i <Output.hyb> -d <Fasta_File> -a <GENE_ID_1> -x <START_COORD_1> -y <START_COORD_2> -l <Length_of_Fragments>"
+    echo "  -i   Output.hyb from running hyb2"
+    echo "  -d   Fasta file used for mapping"
+    echo "  -a   Gene ID of interest"
+    echo "  -b   Second gene ID of interest (if different)"
+    echo "  -x   Start coordinate of 1st strand/gene for folding"
+    echo "  -y   Start coordinate of 2nd strand/gene for folding"
+    echo "  -j   Directory of VARNAcmd.jar (default set when installing hyb2)"
+    echo "  -r   Folding Algorithm: 1 for ViennaRNA, 0 for UNAFold (if installed separately) (default=1)"
+    echo "  -0   Interactive Mode for VARNA Pop-up: 0 to disable, 1 to activate (default=0)"
+    echo " "
+    echo "To start GUI:"
+    echo "hyb2_app -i <Output.hyb> -d <Fasta_File> -a <GENE_ID_1> "
+    echo "  -i   Output.hyb from running hyb2"
+    echo "  -d   Fasta file used for mapping"
+    echo "  -a   Gene ID of interest"
+    echo "  -b   Second gene ID of interest (if different)"
+    echo "  -j   Directory of VARNAcmd.jar (default set when installing hyb2)"
+    echo " "
+    echo "To compare between datasets after generating hyb2 files:"
+    echo "hyb2_compare -i <Input.table> -o <Outpud_ID> -a <GENE_ID> -d <Fasta_File>"
+    echo "Run hyb2_compare without options for more help details regarding hyb2_compare"
+    echo " "
+    echo "Any other queries, email me at laujianyou@live.com"
+    exit 0
+}
+
 # parsing command line options
-while getopts "i:1:2:o:v:m:h:a:b:q:x:y:l:j:r:e:" OPTION
+while getopts "i:d:o:v:m:h:a:b:q:x:y:l:j:r:e:" OPTION
 do
      case $OPTION in
          i) IN_FILE=$OPTARG ;;
-         1) DB_1=$OPTARG ;;
-         2) DB_2=$OPTARG ;;
+         d) DB_1=$OPTARG ;;
          o) OUT=$OPTARG ;;
          v) hval=$OPTARG ;;
          m) gmax=$OPTARG;;
@@ -53,8 +117,7 @@ do
 done
 
 if (( $OPTIND == 1 )); then
-     echo "No options selected"
-     exit 0
+     print_help
 fi
 
 #Step1 --------------------------------------------------------------------------------------------------------------------------------------------------
@@ -122,8 +185,14 @@ then
 	SAM=$IN_FILE
 fi
 
+if [[ "$IN_FILE"  == *hyb ]]
+then
+	OUT=${IN_FILE/.hyb/}
+	echo "Hyb Format As Input Detected"
+fi
+
 #Convert SAM to Hyb Format
-if [ ! -f $OUT".hyb" ]
+if [ ! -f $OUT".hyb" ] && [[ "$IN_FILE"  != *sam ]]
 then
 	if sam2hyb -i $SAM -d $DB_1 -o $OUT -v $hval -g $gmax -e $ENERGY -r $FOLD
 	then
@@ -131,6 +200,15 @@ then
 	else
 		echo "Error! Aborting! Check input arguments." 1>&2
 	fi
+elif [ ! -f $OUT".hyb" ] && [[ "$IN_FILE"  == *sam ]]
+then
+	sam_filt $IN_FILE > ${SAM/.sam/.filt.sam}
+	if sam2hyb -i ${SAM/.sam/.filt.sam} -d $DB_1 -o $OUT -v $hval -g $gmax -e $ENERGY -r $FOLD
+	then
+		echo "Hyb File Generated."
+        else
+                echo "Error! Aborting! Check input arguments." 1>&2
+        fi
 else
 	echo "Hyb File Exist. Next Step."
 fi
@@ -139,12 +217,12 @@ fi
 #Plot contact density map of selected genes
 if [ ! -z $GENE_1 ]
 then
-	plot_cdm -i $OUT".hyb" -q $LIMIT -a $GENE_1
+	hyb2_coverage -i $OUT".hyb" -q $LIMIT -a $GENE_1
 fi
 
 if [ ! -z $GENE_2 ]
 then
-	plot_cdm -i $OUT".hyb" -q $LIMIT -a $GENE_1 -b $GENE_2
+	hyb2_coverage -i $OUT".hyb" -q $LIMIT -a $GENE_1 -b $GENE_2
 else
 	echo "Failed to plot contact density map of second gene! Check input arguments (Gene -b)." 1>&2
 fi
@@ -152,17 +230,17 @@ fi
 if [ -z $GENE_2 ] && [ -z $Y_COORD ] && [ ! -z $LEN ]
 then
 	X_END=$(($X_COORD+$LEN-1))
-	plot_cdm -i $OUT".hyb" -q $LIMIT -a $GENE_1 -w $X_COORD -x $X_END -y $X_COORD -z $X_END
+	hyb2_coverage -i $OUT".hyb" -q $LIMIT -a $GENE_1 -w $X_COORD -x $X_END -y $X_COORD -z $X_END
 elif [ -z $GENE_2 ] && [ ! -z $Y_COORD ] && [ ! -z $LEN ]
 then
 	X_END=$(($X_COORD+$LEN-1))
 	Y_END=$(($Y_COORD+$LEN-1))
-	plot_cdm -i $OUT".hyb" -q $LIMIT -a $GENE_1 -w $X_COORD -x $X_END -y $Y_COORD -z $Y_END
+	hyb2_coverage -i $OUT".hyb" -q $LIMIT -a $GENE_1 -w $X_COORD -x $X_END -y $Y_COORD -z $Y_END
 elif [ ! -z $GENE_2 ] && [ ! -z $Y_COORD ] && [ ! -z $LEN ]
 then
 	X_END=$(($X_COORD+$LEN-1))
 	Y_END=$(($Y_COORD+$LEN-1))
-	plot_cdm -i $OUT".hyb" -q $LIMIT -a $GENE_1 -b $GENE_2 -w $X_COORD -x $X_END -y $Y_COORD -z $Y_END
+	hyb2_coverage -i $OUT".hyb" -q $LIMIT -a $GENE_1 -b $GENE_2 -w $X_COORD -x $X_END -y $Y_COORD -z $Y_END
 else
 	echo "Failed to plot zoomed-in contact density map! Check input arguments (Genes -a -b & Coords -x -y -l)." 1>&2
 fi
@@ -191,4 +269,4 @@ fi
 
 echo "Analysis completed."
 echo "To compare between different datasets and plot differential coverage map, similarity heatmap, and differential structures, use:"
-echo "hyb2_compare -a condition1_rep1.entire.txt -b condition1_rep2.entire.txt -c cond1_rep3.entire.txt -d cond1_rep4.entire.txt -i condition2_rep1.entire.txt -j cond2_rep2.entire.txt -k cond2_rep3.entire.txt -l cond2_rep4.entire.txt -1 cond1_rep1.hyb -2 cond1_rep2.hyb -3 cond1_rep3.hyb -4 cond1_rep4.hyb -5 cond2_rep1.hyb -6 cond2_rep2.hyb -7 cond2_rep3.hyb -8 cond2_rep4.hyb -0 GENE_NAME -9 FASTA -v ~/dir_of_VARNAcmd.jar"
+echo "hyb2_compare -a condition1_rep1.contact.txt -b condition1_rep2.contact.txt -c cond1_rep3.contact.txt -d cond1_rep4.contact.txt -i condition2_rep1.contact.txt -j cond2_rep2.contact.txt -k cond2_rep3.contact.txt -l cond2_rep4.contact.txt -1 cond1_rep1.hyb -2 cond1_rep2.hyb -3 cond1_rep3.hyb -4 cond1_rep4.hyb -5 cond2_rep1.hyb -6 cond2_rep2.hyb -7 cond2_rep3.hyb -8 cond2_rep4.hyb -0 GENE_NAME -9 FASTA -v ~/dir_of_VARNAcmd.jar"

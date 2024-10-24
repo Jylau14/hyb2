@@ -33,7 +33,7 @@ input <- c(intersect(list.files(pattern=c(args[6])), list.files(pattern=c('.forT
            intersect(list.files(pattern=c(args[11])), list.files(pattern=c('.forTable.txt'))),
            intersect(list.files(pattern=c(args[12])), list.files(pattern=c('.forTable.txt'))),
            intersect(list.files(pattern=c(args[13])), list.files(pattern=c('.forTable.txt'))))
-input <- gsub(pattern="\\.forTable.txt$",".entire.txt",input)
+input <- gsub(pattern="\\.forTable.txt$",".contact.txt",input)
 #read data
 data<- list()
 x=0
@@ -42,7 +42,7 @@ for (i in 1:(length(input))){
     x=x+1
     data[[i]] <- data.table::fread((input[x]),header=T,sep="\t")
     colnames(data[[i]]) <- c("x", "y", "count")
-    data[[i]]$ID <- gsub(pattern="\\.entire.txt$","",input[x])
+    data[[i]]$ID <- gsub(pattern="\\.contact.txt$","",input[x])
   }
 }
 

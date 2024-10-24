@@ -39,18 +39,18 @@ do
 done
 
 #Input file names
-A1=${a1/.entire.txt/}
-A2=${a2/.entire.txt/}
-A3=${a3/.entire.txt/}
-A4=${a4/.entire.txt/}
-B1=${b1/.entire.txt/}
-B2=${b2/.entire.txt/}
-B3=${b3/.entire.txt/}
-B4=${b4/.entire.txt/}
+A1=${a1/.contact.txt/}
+A2=${a2/.contact.txt/}
+A3=${a3/.contact.txt/}
+A4=${a4/.contact.txt/}
+B1=${b1/.contact.txt/}
+B2=${b2/.contact.txt/}
+B3=${b3/.contact.txt/}
+B4=${b4/.contact.txt/}
 
 #Prepare input tables for DESeq2
 for f in $a1 $a2 $a3 $a4 $b1 $b2 $b3 $b4 ; do
-a=${f/.entire.txt/}
+a=${f/.contact.txt/}
 sort -k3,3nr $f | awk -v a=$a '!/^#/{print $1 "_" $2 "\t" a "=" $3}' > $a".forTable.txt"
 done
 echo -e '#seq_ID''\t'$A1'\t'$A2'\t'$A3'' '\t'$A4'' '\t'$B1'\t'$B2'\t'$B3' ''\t'$B4' ' | sed $'s/\t //g;s/-/_/g' > $A1"-"$B1".table.txt"

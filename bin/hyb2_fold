@@ -20,14 +20,13 @@ FOLD=1
 VARNA=$(VARNAcmd.sh)
 
 # parsing command line options
-while getopts "i:a:b:1:2:x:y:l:j:0:r:" OPTION
+while getopts "i:a:b:d:x:y:l:j:0:r:" OPTION
 do
 	case $OPTION in
 		i) IN_FILE=$OPTARG ;;
 		a) GENE_1=$OPTARG ;;
 		b) GENE_2=$OPTARG ;;
-		1) FASTA_1=$OPTARG ;;
-		2) FASTA_2=$OPTARG ;;
+		d) FASTA_1=$OPTARG ;;
 		x) X_COORD=$OPTARG ;;
 		y) Y_COORD=$OPTARG ;;
 		l) LEN=$OPTARG ;;
@@ -210,7 +209,7 @@ cat ${OUT_FILE/.hyb/_names_scores.txt} | sort -k2,2nr | head
 vname=$(cat ${OUT_FILE/.hyb/_names_scores.txt} | sort -k2,2nr | head -n1 | awk '{split($1,a,"__"); print a[2]}')
 name=$(cat ${OUT_FILE/.hyb/_names_scores.txt} | sort -k2,2nr | head -n1 | awk '{print $1}')
 cat ${vname/.VARNA_scores.txt/.vienna}; echo Open ${vname/.VARNA_scores.txt/.vienna} in VARNA for more customization options
-cat ${OUT_FILE/.hyb/_names_scores.txt} | sort -k2,2nr | head -n1 | while read name score; do awk '{print log($1)/log(2)}' $name | sed 's/-inf/0/g;s/^-.*/0/g' > ${name/_scores.txt/_log2scores.txt} ; echo Load ${name/_scores.txt/_log2scores.txt} as colour coding score in VARNA ; done
+cat ${OUT_FILE/.hyb/_names_scores.txt} | sort -k2,2nr | head -n1 | while read name score; do awk '{print log($1+1)/log(2)}' $name | sed 's/-inf/0/g;s/^-.*/0/g' > ${name/_scores.txt/_log2scores.txt} ; echo Load ${name/_scores.txt/_log2scores.txt} as colour coding score in VARNA ; done
 
 if [ ! -z $VARNA ]
 then

@@ -34,8 +34,8 @@ def main(infile):
 
 def print_line(arr, flag, dblen):
     cigar, mismatches, gaps, identity = [], 0, 0, 0
-    cigar_num = re.findall('\d+',arr[5])
-    cigar_op = re.findall('\D',arr[5])
+    cigar_num = re.findall(r'\d+',arr[5])
+    cigar_op = re.findall(r'\D',arr[5])
     ref_len = 0
     for i in range(len(cigar_op)):
         if cigar_op[i] == "M":

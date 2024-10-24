@@ -22,7 +22,7 @@ dcm <- ggplot(data, aes(x,y))+
                                 label.position = "left", label.theme = element_text(angle = 270, size = 9), label.vjust = 0, label.hjust = 0.5))+
   scale_fill_gradientn(colours=c("blue", "white", "red"), breaks = c(-3,0,3), labels = c(3,0,3)) +
   theme_bw()+theme(aspect.ratio = 1)+
-  labs(title = POS,subtitle= NEG, x="3'-5' Chimera (nt)",y="5'-3' Chimera (nt)")+
+  labs(title = POS,subtitle= NEG, x="Arm 1 (nt)",y="Arm 2 (nt)")+
   scale_x_continuous(expand = c(0, 0), limits = c(0, max(max(data$x),max(data$y))+10))+
   scale_y_continuous(expand = c(0, 0), limits = c(0, max(max(data$x),max(data$y))+10))+
   theme(plot.title=element_text(size=10, color="red"),plot.subtitle=element_text(size=10,color="blue"))+

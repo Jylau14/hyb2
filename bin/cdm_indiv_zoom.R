@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
-#plots zoomed in contact density map based on input_entire.txt and coordinates
-#run on terminal cdm_indiv_zoom.R input_entire.txt x_start x_end y_start y_end upper_quantile(0.95) plot_title
+#plots zoomed in contact density map based on input.contact.txt and coordinates
+#run on terminal cdm_indiv_zoom.R input.contact.txt x_start x_end y_start y_end upper_quantile(0.95) plot_title
 library(ggplot2)
 library(data.table)
 args <- commandArgs(trailingOnly = TRUE)
@@ -18,7 +18,7 @@ TITLE <- as.character(args[9])
 data <- data.table::fread(INPUT,header=T,sep="\t")
 
 # set ID name, upper quantile limit
-data$ID <- gsub(pattern="\\.entire.txt$","",INPUT)
+data$ID <- gsub(pattern="\\.contact.txt$","",INPUT)
 quant <- quantile(data$count, probs=LIMIT)
 data$count2 <- ifelse(data$count > quant, quant, data$count)
 Title <- ifelse(!is.na(TITLE), TITLE, data$ID[1])
