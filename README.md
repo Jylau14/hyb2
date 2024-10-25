@@ -83,7 +83,7 @@ conda activate hyb2_macOS-arm
 ```
 After activating environment:
 ```bash
-hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o run_1 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 
+hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -o test_1 -a Zika_virusRNA -x 1001 -l 500 
 ```
 To run the program, the first thing to have is the sequence alignment map (SAM) file or a fastq file. Here, we've provided only the SAM file.
 
@@ -94,18 +94,10 @@ The second file needed will contain the reference fasta sequences.
 **VARNA** is used to visualize the RNA structures. 
 
 ### Reference Fasta Files
-The following ID format is **preferred** to provide a more complete set of information on the sequences:
+The following ID format is provided to be more informative:
 
 > \>Gene stable ID version, Transcript stable ID version, Gene name, Gene type
-
-E.g.
-
-Downloaded from BioMart (input fasta can be in this format):
-
-> \>ENSG00000007372.25|ENST00000638963.1|PAX6|protein_coding
-
-After being formatted in the pipeline:
-
+> 
 > \>ENSG00000007372.25_ENST00000638963.1_PAX6_mRNA
 
 Or see:
@@ -131,9 +123,7 @@ To get familiar with the command line arguements, it could be broadly explained 
 ### Converting Input to Hyb Format
 -i input_file (fastq/sam)
 
--1 reference_sequences.fasta used for mapping
-
--2 2nd_referece_sequences.fasta if different from 1st
+-d reference_sequences.fasta used for mapping
 
 -o output_prefix
 
@@ -167,25 +157,25 @@ To get familiar with the command line arguements, it could be broadly explained 
 ### Analysis of short-range intramolecular interactions:
 RNA Structure Folding from 1001-1500nt positions of Zika virus (ZIKV).
 ```bash
-hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o test_1 -a ZIKV-PE243-2015_virusRNA -x 1001 -l 500
+hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -o test_1 -a Zika_virusRNA -x 1001 -l 500
 ```
 ### Analysis of long-range intramolecular interactions:
 RNA Structure Folding of 1001-1500nt positions with 5001-5500nt positions of ZIKV.
 ```bash
-hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o test_2 -a ZIKV-PE243-2015_virusRNA -x 1001 -y 5001 -l 500
+hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -o test_2 -a Zika_virusRNA -x 1001 -y 5001 -l 500
 ```
 ### Analysis of intermolecular interactions:
 RNA Structure Folding of 7501-8000nt positions of ZIKV with 501-550nt positions of 18S rRNA.
 ```bash
-hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -2 18S.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 
+hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -2 18S.fasta -o test_3 -a Zika_virusRNA -b 18S_rRNA -x 7501 -y 501 -l 500 
 
 # If reference sequences are contained in the same file you can use:
-hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o test_3 -a ZIKV-PE243-2015_virusRNA -b NR003286.4_RNA18SN5_rRNA -x 7501 -y 501 -l 500 
+hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -o test_3 -a Zika_virusRNA -b 18S_rRNA -x 7501 -y 501 -l 500 
 ```
 ### Analysis of homodimer interactions:
 RNA Structure Folding of 3501-3700nt positions of ZIKV with 3501-3700nt positions of a second strand of ZIKV. 
 ```bash
-hyb2 -i data/testData.sam -1 data/Zika_18S_formatted.fasta -o test_4 -a ZIKV-PE243-2015_virusRNA -b ZIKV-PE243-2015_virusRNA -x 3501 -y 3501 -l 200 
+hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -o test_4 -a Zika_virusRNA -b Zika_virusRNA -x 3501 -y 3501 -l 200 
 ```
 ## 
 ### Randomized Parallel RNA Structure Folding
@@ -193,15 +183,15 @@ To perform randomized parellel RNA structure folding, which folds the RNA 1,000 
 
 Taking the analysis of intermolecular interactions as an example:
 ```bash
-qsub comradesFold2 -c test_3_ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_rRNA-501-1000.1-1100_folding_constraints.txt -i ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_rRNA-501-1000_1-1100.fasta -s 1
+qsub comradesFold2 -c test_3_Zika_virusRNA-7501-8000_18S_rRNA-501-1000.1-1100_folding_constraints.txt -i Zika_virusRNA-7501-8000_18S_rRNA-501-1000_1-1100.fasta -s 1
 
-comradesScore -i test_3_ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_rRNA-501-1000.basepair_scores.txt -f ZIKV-PE243-2015_virusRNA-7501-8000_NR003286.4_RNA18SN5_rRNA-501-1000_1-1100.fasta 
+comradesScore -i test_3_Zika_virusRNA-7501-8000_18S_rRNA-501-1000.basepair_scores.txt -f Zika_virusRNA-7501-8000_18S_rRNA-501-1000_1-1100.fasta 
 ```
 ##
 ### Graphical User Interface
 To create an interactive GUI pop-up window:
 ```bash
-hyb2_app -i test_1.ZIKV-PE243-2015_virusRNA.entire.txt -h test_1.hyb -a ZIKV-PE243-2015_virusRNA -1 Zika_18S_formatted.fasta
+hyb2_app -i test_1.hyb -a Zika_virusRNA -d Zika_18S.fasta
 ```
 ##
 ### Differential Coverage Map and Similarity Heatmap
@@ -211,17 +201,14 @@ To find the conservations between 2 experiments, we look for overlapping interac
 
 Up to 4 replicates for each experiment can be used as input, with a minimum of 2.
 
-The input files for **hyb2_compare** comes from outputs of the main hyb2 pipeline **(*entire.txt)**.
+The input files for **hyb2_compare** comes from outputs of the main hyb2 pipeline, a **table needs to be made manually** in the format shown here:
+> set link
 
 **MacOS-ARM cannot use hyb2_compare. Several packages in DESeq2 not supported in ARM architecture.**
 
 For example, to identify the differences and similarities between control and experimental conditions:
 ```bash
-hyb2_compare -a control_rep1.entire.txt -b control_rep2.entire.txt -c control_rep3.entire.txt -d control_rep4.entire.txt -i exp_rep1.entire.txt -j exp_rep2.entire.txt -k exp_rep3.entire.txt -l exp_rep4.entire.txt -1 control_rep1.hyb -2 control_rep2.hyb -3 control_rep3.hyb -4 control_rep4.hyb -5 exp_rep1.hyb -6 exp_rep2.hyb -7 exp_rep3.hyb -8 exp_rep4.hyb -0 GENE_NAME -9 ref.fasta 
-```
-The automatic plotting of RNA structures can be skipped by omitting some options, and with the command:
-```
-hyb2_compare -a control_rep1.entire.txt -b control_rep2.entire.txt -c control_rep3.entire.txt -d control_rep4.entire.txt -i exp_rep1.entire.txt -j exp_rep2.entire.txt -k exp_rep3.entire.txt -l exp_rep4.entire.txt
+hyb2_compare -i input.table -a Zika_virusRNA -d Zika_18S.fasta 
 ```
 
 ## How To Read Outputs
