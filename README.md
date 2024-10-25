@@ -167,9 +167,6 @@ hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -o test_2 -a Zika_vir
 ### Analysis of intermolecular interactions:
 RNA Structure Folding of 7501-8000nt positions of ZIKV with 501-550nt positions of 18S rRNA.
 ```bash
-hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -2 18S.fasta -o test_3 -a Zika_virusRNA -b 18S_rRNA -x 7501 -y 501 -l 500 
-
-# If reference sequences are contained in the same file you can use:
 hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -o test_3 -a Zika_virusRNA -b 18S_rRNA -x 7501 -y 501 -l 500 
 ```
 ### Analysis of homodimer interactions:
@@ -199,7 +196,7 @@ To compare between 2 different proximity ligation experiments, the program incor
 
 To find the conservations between 2 experiments, we look for overlapping interactions.
 
-Up to 4 replicates for each experiment can be used as input, with a minimum of 2.
+A minimum of 2 replicates needed for each experiment to be used as input. 
 
 The input files for **hyb2_compare** comes from outputs of the main hyb2 pipeline, a **table needs to be made manually** in the format shown here:
 > set link
