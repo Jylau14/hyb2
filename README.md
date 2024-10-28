@@ -188,7 +188,7 @@ comradesScore -i test_3_Zika_virusRNA-7501-8000_18S_rRNA-501-1000.basepair_score
 ### Graphical User Interface
 To create an interactive GUI pop-up window:
 ```bash
-hyb2_app -i test_1.hyb -a Zika_virusRNA -d Zika_18S.fasta
+hyb2_app -i test_1.hyb -a Zika_virusRNA -d Zika_18S.hyb.fasta
 ```
 ##
 ### Differential Coverage Map and Similarity Heatmap
@@ -205,7 +205,7 @@ The input files for **hyb2_compare** comes from outputs of the main hyb2 pipelin
 
 For example, to identify the differences and similarities between control and experimental conditions:
 ```bash
-hyb2_compare -i input.table -a Zika_virusRNA -d Zika_18S.fasta 
+hyb2_compare -i input.table -a Zika_virusRNA -d Zika_18S.hyb.fasta 
 ```
 
 ## How To Read Outputs

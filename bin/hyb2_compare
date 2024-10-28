@@ -14,109 +14,134 @@
 min=2
 range=100
 LIMIT=0.95
+FOLDING=0
 VARNA=$(VARNAcmd.sh)
 
-# parsing command line options
-while getopts "a:b:c:d:i:j:k:l:m:r:p:1:2:3:4:5:6:7:8:0:9:v:" OPTION
+# Help message function
+print_help() {
+    echo "No Options Specified!"
+    echo "Usage:"
+    echo "To compare between datasets:"
+    echo "hyb2_compare -i <Input.table> -o <Outpud_ID>"
+    echo "Input.table format:"
+    echo "Output1.hyb   Output1.GENE.contact.txt   condition_one"
+    echo "Output2.hyb   Output2.GENE.contact.txt   condition_one"
+    echo "Output3.hyb   Output3.GENE.contact.txt   condition_two"
+    echo "Output4.hyb   Output4.GENE.contact.txt   condition_two"
+    echo "You can prepare however many rows you like (at least 2 for each condition), categorized by condition_one and condition_two"
+    echo " "
+    echo "  -i   Input table You MANUALLY GENERATED"
+    echo "  -d   Fasta file used for mapping"
+    echo "  -a   Gene ID of interest"
+    echo "  -j   Directory of VARNAcmd.jar (default set when installing hyb2)"
+    echo "  -0   Folding option: 0 to disable, 1 to activate automatic folding of enriched interactions (default=0)"
+    echo "  -m   DESeq2 chimera count filtering threshold (default=2)"
+    echo "  -r   Range to define an interaction (default=100). 100nt from midpoint in both directions, meaning 200nt long for each defined interaction"
+    echo "  -q   Upper limit for heatmap chimeric count (default=0.95)"
+    echo " " 
+    echo "Currently Not Compatible with Mac-OS-ARM due to several packages not being implemented yet."
+    echo " "
+    echo "Run hyb2 without options for details about hyb2, hyb2_coverage, and hyb2_app"
+    echo " "
+    echo "Any other queries, email me at laujianyou@live.com"
+    exit 0
+}
+
+# parsingcommand line options
+while getopts "i:o:m:r:q:a:d:j:0" OPTION
 do
         case $OPTION in
-                a) a1=$OPTARG ;;
-                b) a2=$OPTARG ;;
-                c) a3=$OPTARG ;;
-                d) a4=$OPTARG ;;
-                i) b1=$OPTARG ;;
-                j) b2=$OPTARG ;;
-                k) b3=$OPTARG ;;
-                l) b4=$OPTARG ;;
+                i) INPUT=$OPTARG ;;
+                o) OUT=$OPTARG ;;
                 m) min=$OPTARG ;;
                 r) range=$OPTARG ;;
-                p) LIMIT=$OPTARG ;;
-                1) IN_1=$OPTARG ;;
-                2) IN_2=$OPTARG ;;
-                3) IN_3=$OPTARG ;;
-                4) IN_4=$OPTARG ;;
-                5) IN_5=$OPTARG ;;
-                6) IN_6=$OPTARG ;;
-                7) IN_7=$OPTARG ;;
-                8) IN_8=$OPTARG ;;
-                0) GENE=$OPTARG ;;
-                9) FASTA=$OPTARG ;;
-                v) VARNA=$OPTARG ;;
-                ?)
-
-                echo "incorrect option"
-                exit 0
-                ;;
+                q) LIMIT=$OPTARG ;;
+                a) GENE=$OPTARG ;;
+                d) FASTA=$OPTARG ;;
+                j) VARNA=$OPTARG ;;
+                0) FOLDING=$OPTARG ;;
+                *) print_help ;;
         esac
 done
 
-#Input file names
-A1=${a1/.contact.txt/}
-A2=${a2/.contact.txt/}
-A3=${a3/.contact.txt/}
-A4=${a4/.contact.txt/}
-B1=${b1/.contact.txt/}
-B2=${b2/.contact.txt/}
-B3=${b3/.contact.txt/}
-B4=${b4/.contact.txt/}
-
 #Prepare input tables for DESeq2
-for f in $a1 $a2 $a3 $a4 $b1 $b2 $b3 $b4 ; do
-a=${f/.contact.txt/}
-sort -k3,3nr $f | awk -v a=$a '!/^#/{print $1 "_" $2 "\t" a "=" $3}' > $a".forTable.txt"
-done
-echo -e '#seq_ID''\t'$A1'\t'$A2'\t'$A3'' '\t'$A4'' '\t'$B1'\t'$B2'\t'$B3' ''\t'$B4' ' | sed $'s/\t //g;s/-/_/g' > $A1"-"$B1".table.txt"
-make_hybrid_annotation_table.pl $A1".forTable.txt" $A2".forTable.txt" $A3".forTable.txt" $A4".forTable.txt" $B1".forTable.txt" $B2".forTable.txt" $B3".forTable.txt" $B4".forTable.txt" | awk 'NR>1{gsub("NA","0",$0); print $0}' >> $A1"-"$B1".table.txt"
-echo -e $A1'\t'condition_one'\n'$A2'\t'condition_one'\n'$A3'\t'condition_one'\n'$A4'\t'condition_one'\n'$B1'\t'condition_two'\n'$B2'\t'condition_two'\n'$B3'\t'condition_two'\n'$B4'\t'condition_two | sed 's/-/_/g' | awk 'NF>1' > $A1"-"$B1"_names.table"
+awk 'NF' $INPUT | while read x y z; do name=${y/.contact.txt/}; sort -k3,3nr $y | awk -v a=$name '!/^#/{print $1 "_" $2 "\t" a "=" $3}' > $name".forTable.txt"; done
+: > $OUT".forTable.list.txt"
+awk 'NF' $INPUT | while read x y z; do echo ${y/.contact.txt/.forTable.txt}  >> $OUT".forTable.list.txt"; done
+awk 'NF' $INPUT | while read x y z; do echo ${y/.contact.txt/}; done | paste -sd '\t' | awk '{print "#seq_ID\t"$0}' | sed 's/-/_/g' > $OUT".table.txt"
+make_hybrid_annotation_table.pl $(< $OUT".forTable.list.txt") | awk 'NR>1{gsub("NA","0",$0); print $0}' >> $OUT".table.txt"
+awk 'NF' $INPUT | while read x y z; do echo -e ${y/.contact.txt/}"\t"$z | sed 's/-/_/g' ; done > $OUT"_names.table"
 
 #Running DESeq2
-DESeq_run.R $A1"-"$B1".table.txt" $A1"-"$B1"_names.table" $min
+DESeq_run.R $OUT".table.txt" $OUT"_names.table" $min
 
 #Reformat DESeq output for plotting differential coverage map
-val1=$(awk 'FNR==1{print $2}' $A1"-"$B1".table.txt")
-val2=$(awk 'FNR==1{print $3}' $A1"-"$B1".table.txt")
-val3=$(awk 'FNR==1{print $4}' $A1"-"$B1".table.txt")
-val4=$(awk 'FNR==1{print $5}' $A1"-"$B1".table.txt")
-val5=$(awk 'FNR==1{print $6}' $A1"-"$B1".table.txt")
-val6=$(awk 'FNR==1{print $7}' $A1"-"$B1".table.txt")
-val7=$(awk 'FNR==1{print $8}' $A1"-"$B1".table.txt")
-val8=$(awk 'FNR==1{print $9}' $A1"-"$B1".table.txt")
-cat "DESeq_"$A1"-"$B1".txx" | sed "s/\"//g" | awk 'NR>1{print $1 "\tbaseMean=" $2 ";log2FoldChange=" $3 ";lfcSE=" $4 ";stat=" $5 ";pvalue=" $6 ";padj=" $7}' > $A1"-"$B1".tmp1"
-cat $A1"-"$B1".table.txt" | awk -v v1=$val1 -v v2=$val2 -v v3=$val3 -v v4=$val4 -v v5=$val5 -v v6=$val6 -v v7=$val7 -v v8=$val8 'NR>1{print $1 "\t"v1"=" $2 ";"v2"=" $3 ";"v3"=" $4 ";"v4"=" $5 ";"v5"=" $6 ";"v6"=" $7 ";"v7"=" $8 ";"v8"=" $9}' > $A1"-"$B1".tmp2"
+cat "DESeq_"$OUT".txx" | sed "s/\"//g" | awk 'NR>1{print $1 "\tbaseMean=" $2 ";log2FoldChange=" $3 ";lfcSE=" $4 ";stat=" $5 ";pvalue=" $6 ";padj=" $7}' > $OUT".tmp1"
+awk 'NR==1 {
+    for (i=2; i<=NF; i++) {
+        val[i-1] = $i
+    }
+}
+NR > 1 {
+    printf "%s\t", $1
+    for (i=2; i<=NF; i++) {
+        printf "%s=%s;", val[i-1], $i
+    }
+    print ""
+}' $OUT".table.txt" > $OUT".tmp2"
 
 #Final DESeq output
-make_hybrid_annotation_table.pl $A1"-"$B1".tmp2" $A1"-"$B1".tmp1" | awk '{print $NF"\t"$0}' | sort -g | awk '$1!="NA" && ($1=="padj" || $1<0.05)' | cut -f2- > "DESeq_"$A1"-"$B1"_significant.txx"
-rm $A1"-"$B1".tmp1" $A1"-"$B1".tmp2"
-last_field=$(awk 'NR==1{print NF}' "DESeq_"$A1"-"$B1"_significant.txx")
-cat "DESeq_"$A1"-"$B1"_significant.txx" | awk -v last=$last_field '$(last-4)<0{print $1 "\t" log($last)/log(10)"\t"$(last-4)"\t"$last}$(last-4)>0{printf "%s\t%f\t", $1, -1*(log($last)/log(10)); print $(last-4)"\t"$last}' | awk 'NR>1' | tr "_" "\t" | sed '1s/^/x\ty\tlogpadj\tlog2FoldChange\tpadj\n/' > "DESeq_"$A1"-"$B1"_significant.padj_heatmap.txt"
+make_hybrid_annotation_table.pl $OUT".tmp2" $OUT".tmp1" | awk '{print $NF"\t"$0}' | sort -g | awk '$1!="NA" && ($1=="padj" || $1<0.05)' | cut -f2- > "DESeq_"$OUT"_significant.txx"
+rm $OUT".tmp1" $OUT".tmp2"
+last_field=$(awk 'NR==1{print NF}' "DESeq_"$OUT"_significant.txx")
+cat "DESeq_"$OUT"_significant.txx" | awk -v last=$last_field '$(last-4)<0{print $1 "\t" log($last)/log(10)"\t"$(last-4)"\t"$last}$(last-4)>0{printf "%s\t%f\t", $1, -1*(log($last)/log(10)); print $(last-4)"\t"$last}' | awk 'NR>1' | tr "_" "\t" | sed '1s/^/x\ty\tlogpadj\tlog2FoldChange\tpadj\n/' > "DESeq_"$OUT"_significant.padj_heatmap.txt"
 
 #Plot differential coverage map
-differential_coverage_map.R "DESeq_"$A1"-"$B1"_significant.padj_heatmap.txt" $A1 $B1
+differential_coverage_map.R "DESeq_"$OUT"_significant.padj_heatmap.txt" $OUT
 
 #Plot similarity heatmap
-cat $a1 $a2 $a3 $a4 $b1 $b2 $b3 $b4 > $A1"-"$B1".merge.txt"
+: > $OUT".merge.txt"
+cat $INPUT | while read x y z; do cat $y >> $OUT".merge.txt"; done
 
-awk 'n=x[$1,$2]{print n"\n"$0;} {x[$1,$2]=$0;}' $A1"-"$B1".merge.txt" | awk 'ORS=NR%2?FS:RS' | awk '{if (FNR==1) print $1"\t"$4"\t"$5"\t"$6; if (FNR>1 && $3<=$6) print $1"\t"$2"\t"$3; if (FNR>1 && $3>$6) print $4"\t"$5"\t"$6}' | awk 'FNR>2 && $0~/[a-z]/ || FNR>2 && $0~/[A-Z]/ {next} {print}' > $A1"-"$B1".contact.txt"
+awk 'n=x[$1,$2]{print n"\n"$0;} {x[$1,$2]=$0;}' $OUT".merge.txt" | awk 'ORS=NR%2?FS:RS' | awk '{if (FNR==1) print $1"\t"$4"\t"$5"\t"$6; if (FNR>1 && $3<=$6) print $1"\t"$2"\t"$3; if (FNR>1 && $3>$6) print $4"\t"$5"\t"$6}' | awk 'FNR>2 && $0~/[a-z]/ || FNR>2 && $0~/[A-Z]/ {next} {print}' > $OUT".contact.txt"
 
-similarity_heatmap.R $A1"-"$B1".contact.txt" $LIMIT
+similarity_heatmap.R $OUT".contact.txt" $LIMIT
 
 #Split coverage map coordinates into individual interactions
-DESeq_interaction_split_select.py $A1"-"$B1 $range
-sed $'s/0\t0\t0.0\t0.0/x\ty\tlog2FoldChange\tpadj/g' $A1"-"$B1"_"$range"range_pos_enrichment.txt" > $A1"-"$B1"_"$range"_pos.tmp" && mv $A1"-"$B1"_"$range"_pos.tmp" $A1"-"$B1"_"$range"range_pos_enrichment.txt"
-sed $'s/0\t0\t0.0\t0.0/x\ty\tlog2FoldChange\tpadj/g' $A1"-"$B1"_"$range"range_neg_enrichment.txt" > $A1"-"$B1"_"$range"_neg.tmp" && mv $A1"-"$B1"_"$range"_neg.tmp" $A1"-"$B1"_"$range"range_neg_enrichment.txt"
+DESeq_interaction_split_select.py $OUT $range
+sed $'s/0\t0\t0.0\t0.0/x\ty\tlog2FoldChange\tpadj/g' $OUT"_"$range"range_pos_enrichment.txt" > $OUT"_"$range"_pos.tmp" && mv $OUT"_"$range"_pos.tmp" $OUT"_"$range"range_pos_enrichment.txt"
+sed $'s/0\t0\t0.0\t0.0/x\ty\tlog2FoldChange\tpadj/g' $OUT"_"$range"range_neg_enrichment.txt" > $OUT"_"$range"_neg.tmp" && mv $OUT"_"$range"_neg.tmp" $OUT"_"$range"range_neg_enrichment.txt"
 
 #Plot top 10 (lowest padj) zoomed-in coverage density map of the differential interactions
-for f in $A1"-"$B1"_"$range*enrichment.txt; do awk 'NR>1{print $1-150"\t"$1+150"\t"$2-150"\t"$2+150"\t"$3"\t"$4}' $f | sed '1s/^/x1\tx2\ty1\ty2\tlog2FoldChange\tpadj\n/;s/-.[0-9]\+\t/1\t/;s|\t\t|\t-|g' > ${f/.txt/.heatmap.txt}; done
+for f in $OUT"_"$range*enrichment.txt; do awk 'NR>1{print $1-150"\t"$1+150"\t"$2-150"\t"$2+150"\t"$3"\t"$4}' $f | sed '1s/^/x1\tx2\ty1\ty2\tlog2FoldChange\tpadj\n/;s/-.[0-9]\+\t/1\t/;s|\t\t|\t-|g' > ${f/.txt/.heatmap.txt}; done
 
-for f in $A1"-"$B1"_"$range*enrichment.heatmap.txt; do awk 'NR>1 && NR<12' $f | while read x1 x2 y1 y2 z; do contact_density_map_zoom.R $x1 $x2 $y1 $y2 $LIMIT $A1 $A2 $A3 $A4 $B1 $B2 $B3 $B4; done; done
+value=()  # Initialize an empty array
+while IFS= read -r line; do value+=($(echo "$line" | awk '{split($2,a,".contact.txt"); print a[1]}')); done < <(awk 'NF' "$INPUT")
+num_values=${#value[@]}
 
-if [ ! -z $IN_1 ] && [ ! -z $IN_5 ] 
+for f in $OUT"_"$range*enrichment.heatmap.txt; do awk 'NR>1 && NR<12' "$f" | while read x1 x2 y1 y2 z; do args=("$x1" "$x2" "$y1" "$y2" "$LIMIT"); for ((i=0; i<num_values; i++)); do args+=("${value[i]}"); done; contact_density_map_zoom.R "${args[@]}"; done; done
+
+declare -a condition_one_files
+declare -a condition_two_files
+
+while read -r x y z; do
+    if [[ $z == "condition_one" ]]; then
+        condition_one_files+=("$x")
+    elif [[ $z == "condition_two" ]]; then
+        condition_two_files+=("$x")
+    fi
+done < $INPUT
+
+if [ "$FOLDING" == "1" ]
 then
-	awk -v GENE=$GENE '$4~GENE && $10~GENE' $IN_1 $IN_2 $IN_3 $IN_4 > ${IN_1/hyb/pos.hyb}
-	awk -v GENE=$GENE '$4~GENE && $10~GENE' $IN_5 $IN_6 $IN_7 $IN_8 > ${IN_5/hyb/neg.hyb}
+	for IN in "${condition_one_files[@]}"; do awk -v GENE="$GENE" '$4~GENE && $10~GENE' "${IN}"* > "${IN/hyb/pos.hyb}"; done
+	for IN in "${condition_two_files[@]}"; do awk -v GENE="$GENE" '$4~GENE && $10~GENE' "${IN}"* > "${IN/hyb/neg.hyb}"; done
 
-	for f in $A1"-"$B1"_"$range*enrichment.heatmap.txt; do awk '{ if(NR>1 && NR<12 && $1>$3) print $3"\t"$4"\t"$1"\t"$2"\t"$5; else if (NR>1 && NR<12 && $1<$3) print $0}' $f | while read x1 x2 y1 y2 z; do res=$(($y1-$x1)); if [ 300 -gt $res ]; then hyb2_fold -i ${IN_1/hyb/pos.hyb} -a $GENE -1 $FASTA -x $(($x1+1)) -l $(($res+300)) -j $VARNA; else hyb2_fold -i ${IN_1/hyb/pos.hyb} -a $GENE -1 $FASTA -x $(($x1+1)) -y $(($y1+1)) -l 300 -j $VARNA; fi; done; done
-	for f in $A1"-"$B1"_"$range*enrichment.heatmap.txt; do awk '{ if(NR>1 && NR<12 && $1>$3) print $3"\t"$4"\t"$1"\t"$2"\t"$5; else if (NR>1 && NR<12 && $1<$3) print $0}' $f | while read x1 x2 y1 y2 z; do res=$(($y1-$x1)); if [ 300 -gt $res ]; then hyb2_fold -i ${IN_5/hyb/neg.hyb} -a $GENE -1 $FASTA -x $(($x1+1)) -l $(($res+300)) -j $VARNA; else hyb2_fold -i ${IN_1/hyb/neg.hyb} -a $GENE -1 $FASTA -x $(($x1+1)) -y $(($y1+1)) -l 300 -j $VARNA; fi; done; done
+	for f in $OUT"_"$range*enrichment.heatmap.txt; do awk '{ if(NR>1 && NR<12 && $1>$3) print $3"\t"$4"\t"$1"\t"$2"\t"$5; else if (NR>1 && NR<12 && $1<$3) print $0}' $f | while read x1 x2 y1 y2 z; do res=$(($y1-$x1)); if [ 300 -gt $res ]; then hyb2_fold -i ${IN/hyb/pos.hyb} -a $GENE -d $FASTA -x $(($x1+1)) -l $(($res+300)) -j $VARNA; else hyb2_fold -i ${IN/hyb/pos.hyb} -a $GENE -d $FASTA -x $(($x1+1)) -y $(($y1+1)) -l 300 -j $VARNA; fi; done; done
+	for f in $OUT"_"$range*enrichment.heatmap.txt; do awk '{ if(NR>1 && NR<12 && $1>$3) print $3"\t"$4"\t"$1"\t"$2"\t"$5; else if (NR>1 && NR<12 && $1<$3) print $0}' $f | while read x1 x2 y1 y2 z; do res=$(($y1-$x1)); if [ 300 -gt $res ]; then hyb2_fold -i ${IN/hyb/neg.hyb} -a $GENE -d $FASTA -x $(($x1+1)) -l $(($res+300)) -j $VARNA; else hyb2_fold -i ${IN/hyb/neg.hyb} -a $GENE -d $FASTA -x $(($x1+1)) -y $(($y1+1)) -l 300 -j $VARNA; fi; done; done
 else
 	echo "Use Options -0 to -9, and -j to Plot RNA Secondary Structures for Enriched Interactions"
 fi
+
+echo "Comparison Completed"
+
