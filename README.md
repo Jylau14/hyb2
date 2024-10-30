@@ -1,7 +1,7 @@
 # Hyb2
-***Easily Generates RNA structures of short- and long-range intra/intermolecular interactions, and homodimers with an Interactive Graphical User Interface.***
+***Easily Generate RNA structures of short- and long-range intra/intermolecular interactions, and homodimers with an Interactive Graphical User Interface.***
 
-A ***streamlined*** program for analyzing proximity ligation experiments from mapped files in the fastq/SAM format to: 
+A ***streamlined*** program for analyzing RNA proximity ligation experiments from mapped files in the fastq/SAM format to: 
 1. Generate a list of chimeric interactions with their coordinates, sequence, and folding energy, 
 2. Plot contact density map of selected genes and viewpoint graphs, 
 3. Generate intra-/intermolecular RNA structure of any selected regions.
@@ -83,7 +83,7 @@ conda activate hyb2_macOS-arm
 ```
 After activating environment:
 ```bash
-hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -o test_1 -a Zika_virusRNA -x 1001 -l 500 
+hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -o test -a Zika_virusRNA -x 1001 -l 500 
 ```
 To run the program, the first thing to have is the sequence alignment map (SAM) file or a fastq file. Here, we've provided only the SAM file.
 
@@ -157,38 +157,60 @@ To get familiar with the command line arguements, it could be broadly explained 
 ### Analysis of short-range intramolecular interactions:
 RNA Structure Folding from 1001-1500nt positions of Zika virus (ZIKV).
 ```bash
-hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -o test_1 -a Zika_virusRNA -x 1001 -l 500
+hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -o test -a Zika_virusRNA -x 1001 -l 500
 ```
 ### Analysis of long-range intramolecular interactions:
 RNA Structure Folding of 1001-1500nt positions with 5001-5500nt positions of ZIKV.
 ```bash
-hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -o test_2 -a Zika_virusRNA -x 1001 -y 5001 -l 500
+hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -o test -a Zika_virusRNA -x 1001 -y 5001 -l 500
 ```
 ### Analysis of intermolecular interactions:
 RNA Structure Folding of 7501-8000nt positions of ZIKV with 501-550nt positions of 18S rRNA.
 ```bash
-hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -o test_3 -a Zika_virusRNA -b 18S_rRNA -x 7501 -y 501 -l 500 
+hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -o test -a Zika_virusRNA -b 18S_rRNA -x 7501 -y 501 -l 500 
 ```
 ### Analysis of homodimer interactions:
 RNA Structure Folding of 3501-3700nt positions of ZIKV with 3501-3700nt positions of a second strand of ZIKV. 
 ```bash
-hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -o test_4 -a Zika_virusRNA -b Zika_virusRNA -x 3501 -y 3501 -l 200 
+hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -o test -a Zika_virusRNA -b Zika_virusRNA -x 3501 -y 3501 -l 200 
 ```
+
+##
+### Contact Density Maps and RNA Folding
+Running hyb2 already generates Contact Density Maps and RNA Structures, however, to skip the processing of a fastq/SAM to hyb file and go directly into plotting contact density maps:
+```bash
+hyb2 -i test.hyb -a 18S_rRNA
+
+# Or
+hyb2_coverage -i test.hyb -a 18S_rRNA 
+```
+To also zoom-in on certain regions on the Contact Density Map:
+```bash
+hyb2 -i test.hyb -a 18S_rRNA -x 201 -y 201 -l 1200
+
+# Or -w -x -y -z corresponds to x1 x2 y1 and y2
+hyb2_coverage -i test.hyb -a 18S_rRNA -w 201 -x 1400 -y 201 -z 1400
+```
+To plot RNA structures directly using hyb file as input:
+```bash
+hyb2_fold -i test.hyb -d Hyb2/data/Zika_18S.fasta -a Zika_virusRNA -x 1 -y 1001 -l 200
+```
+
 ## 
 ### Randomized Parallel RNA Structure Folding
 To perform randomized parellel RNA structure folding, which folds the RNA 1,000 times, and subsequently scoring each structure, a computer cluster that runs **qsub** is required.
 
 Taking the analysis of intermolecular interactions as an example:
 ```bash
-qsub comradesFold2 -c test_3_Zika_virusRNA-7501-8000_18S_rRNA-501-1000.1-1100_folding_constraints.txt -i Zika_virusRNA-7501-8000_18S_rRNA-501-1000_1-1100.fasta -s 1
+qsub comradesFold2 -c test_Zika_virusRNA-7501-8000_18S_rRNA-501-1000.1-1100_folding_constraints.txt -i Zika_virusRNA-7501-8000_18S_rRNA-501-1000_1-1100.fasta -s 1
 
-comradesScore -i test_3_Zika_virusRNA-7501-8000_18S_rRNA-501-1000.basepair_scores.txt -f Zika_virusRNA-7501-8000_18S_rRNA-501-1000_1-1100.fasta 
+comradesScore -i test_Zika_virusRNA-7501-8000_18S_rRNA-501-1000.basepair_scores.txt -f Zika_virusRNA-7501-8000_18S_rRNA-501-1000_1-1100.fasta 
 ```
 ##
 ### Graphical User Interface
 To create an interactive GUI pop-up window:
 ```bash
-hyb2_app -i test_1.hyb -a Zika_virusRNA -d Zika_18S.hyb.fasta
+hyb2_app -i test.hyb -a Zika_virusRNA -d Hyb2/data/Zika_18S.hyb.fasta
 ```
 ##
 ### Differential Coverage Map and Similarity Heatmap
@@ -198,14 +220,14 @@ To find the conservations between 2 experiments, we look for overlapping interac
 
 A minimum of 2 replicates needed for each experiment to be used as input. 
 
-The input files for **hyb2_compare** comes from outputs of the main hyb2 pipeline, a **table needs to be made manually** in the format shown here:
-> set link
+The input files for **hyb2_compare** comes from outputs of the main hyb2 pipeline, a **tab-delimited table needs to be made manually** in the format shown here:
+> https://github.com/Jylau14/hyb2/blob/main/data/hyb2_compare_input.table
 
 **MacOS-ARM cannot use hyb2_compare. Several packages in DESeq2 not supported in ARM architecture.**
 
 For example, to identify the differences and similarities between control and experimental conditions:
 ```bash
-hyb2_compare -i input.table -a Zika_virusRNA -d Zika_18S.hyb.fasta 
+hyb2_compare -i input.table -a Zika_virusRNA -d Hyb2/data/Zika_18S.hyb.fasta 
 ```
 
 ## How To Read Outputs
