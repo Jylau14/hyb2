@@ -37,12 +37,12 @@ if [ -z $GENE_2 ]
 then
         hyb2_coverage -i $HYB -a $GENE_1
         INPUT=${HYB/.hyb/.$GENE_1".contact.txt"}
-        Rscript -e 'shiny::runApp("hyb2_shiny.R", launch.browser=TRUE)' $INPUT $HYB $GENE_1 $FASTA $VARNA $GENE_1 $FASTA
+        Rscript -e 'shiny::runApp("hyb2_shiny.R", launch.browser=TRUE)' $INPUT $HYB $GENE_1 $FASTA $VARNA $GENE_1
 elif [ ! -z $GENE_2 ] 
 then
         hyb2_coverage -i $HYB -a $GENE_1 -b $GENE_2
         INPUT=${HYB/.hyb/.$GENE_1"-"$GENE_2".contact.txt"}
-        Rscript -e 'shiny::runApp("hyb2_shiny.R", launch.browser=TRUE)' $INPUT $HYB $GENE_1 $FASTA $VARNA $GENE_2 $FASTA
+        Rscript -e 'shiny::runApp("hyb2_shiny.R", launch.browser=TRUE)' $INPUT $HYB $GENE_1 $FASTA $VARNA $GENE_2
 else
         echo "Something went wrong! Check input arguments."
 fi
