@@ -16,7 +16,7 @@ titleID <- paste0(gsub(pattern="\\_significant.padj_heatmap.txt$","",INPUT))
 
 #plot differential coverage map, save as pdf
 dcm <- ggplot(data, aes(x,y))+
-  geom_tile(aes(fill=count2), show.legend=TRUE)+
+  geom_tile(aes(fill=count2), show.legend=TRUE, na.rm=TRUE)+
   guides(fill = guide_colourbar(barwidth = 0.5, barheight = 10, ticks.colour = "black" ,title = "log padj", title.position = "right", 
                                 title.theme = element_text(angle = 270, size = 9.5), title.vjust = 0, title.hjust = 0.5,
                                 label.position = "left", label.theme = element_text(angle = 270, size = 9), label.vjust = 0, label.hjust = 0.5))+
