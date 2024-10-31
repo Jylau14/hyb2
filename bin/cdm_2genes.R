@@ -18,7 +18,7 @@ Title <- ifelse(!is.na(TITLE), TITLE, data$ID[1])
 
 #plot contact density map, save as pdf
 cdm <- ggplot(data, aes(x,y))+
-  geom_tile(aes(fill=count2), show.legend=TRUE)+
+  geom_tile(aes(fill=count2), show.legend=TRUE, na.rm=TRUE)+
   scale_fill_gradient(na.value ="#ffffff", low = "#ffffff",high="#000000", limits=c(0,ceiling(quant)), breaks=c(as.integer(round(quant*0.25)),as.integer(round(quant/2)),as.integer(round(quant*0.75)),as.numeric(ceiling(quant))))+
   theme_bw()+theme(aspect.ratio = 1)+
   labs(title="Contact Density Map", subtitle = Title,x=paste0(GENE_1, " (nt)"),y=paste0(GENE_2," (nt)"))+
