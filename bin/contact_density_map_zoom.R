@@ -50,7 +50,7 @@ quant <- quantile(all_data$count, probs = LIMIT)
 cdm <- list()
 for (i in unique(all_data$ID)) {
   cdm[[i]] <- ggplot(all_data[all_data$ID == i, ], aes(x, y)) +
-    geom_tile(aes(fill = pmin(count, quant)), show.legend = FALSE) +
+    geom_tile(aes(fill = pmin(count, quant)), show.legend = FALSE, na.rm=TRUE) +
     scale_fill_gradient(na.value = "#ffffff", low = "#ffffff", high = "#000000", limits = c(0, ceiling(quant))) +
     theme_bw() + theme(aspect.ratio = 1) +
     labs(title = i, x = "3'-5' chimera (nt)", y = "5'-3' chimera (nt)") +
