@@ -1,16 +1,12 @@
-#!/bin/bash
+#!/bin/bash -e
 #hyb2_fold, folding based on comradesFold
 
 #create input hyb and fasta files for long-range comradesFold (intramolecular) / folding between 2 independent RNA strands (intermolecular)
 #generates RNA secondary structure of short- and long-range intramolecular- and intermolecular interactions and homodimers
 
 #example code
-#hyb2_fold -i ZAFR.hyb -1 ZAFR.fasta -x 3601 -y 5501 -l 500
+#hyb2_fold -i ZAFR.hyb -d ZAFR.fasta -x 3601 -y 5501 -l 500
 #input for folding between 3601-4100 and 5501-6000
-
-#to only generate the inputs but not generating secondary structure, use:
-#separate scripts: lr_input.sh/inter_input.sh
-#inter_input.sh -i true_U8_homodimers.hyb -a U8-extend -b U8-extend -1 U8_extend.fasta -2 U8_extend.fasta -x 1 -y 1 -l 261
 
 #if GENE_1 sequence length > GENE_2, -a GENE_1 -1 FASTA_1
 #LEN=length of fragment for folding
@@ -246,7 +242,7 @@ echo "randomized parrallel RNA folding to fold RNA 1000 times using computer clu
 echo "qsub comradesFold2 -c ${OUT_FILE/.hyb/.1-$(($SPAN))_folding_constraints.txt} -i $OUT_FASTA -s 1"
 echo "and assign scores to each basepair using: comradesScore -i ${OUT_FILE/.hyb/.basepair_scores.txt} -f $OUT_FASTA"
 
-rm $OUT_FASTA".bps"
+rm $OUT_FASTA".bps" $OUT_FILE $OUT_FASTA $OUT_FASTA".aux"
 rm ${OUT_FILE/.hyb/_structure_coordinates.txt}
 rm ${OUT_FILE/.hyb/_scores.txt}
-
+rm ${OUT_FILE/.hyb/.1-$(($SPAN))_folding_constraints.txt.shuf} $name
