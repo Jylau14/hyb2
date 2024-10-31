@@ -10,11 +10,6 @@
 #heatmap 2nd_fasta_file_if_different_from_1st -a GENE_ID_of_interest -b 2nd_GENE_ID_of interest_if_different -q Upperlimit%_for_heatmap_chimeric_count 
 #RNA folding -x START_COORD_of_1st_strand/gene -y START_COORD_of_2nd_strand/gene -l length_of_fragments -j directory_of_VARNAcmd.jar
 
-#analysis of 1 gene (ZIKV), producing a contact density map of ZIKV to ZIKV, and folding of ZIKV from 1001-1500nt
-#hyb2 -i Livefire3.STAR.Aligned.out.sam -1 ~/Virus_Structure/hybdb/GRCh38_and_Livefire/hg38_and_Zika.fasta -o test_1 -a ENSG_ENST_ZIKV-PE243-2015_virusRNA -x 1001 -l 500 -j ~/bin/VARNA/build/jar/VARNAcmd.jar
-#analysis of 2 genes (ZIKV and 18S rRNA), heatmap between the 2 genes, and RNA structure between 1001-1500nt ZIKV and 101-600 18S rRNA
-#hyb2 -i Livefire2.STAR.Aligned.out.sam -1 ~/Virus_Structure/hybdb/GRCh38_and_Livefire/hg38_and_Zika.fasta -o test_2 -a ENSG_ENST_ZIKV-PE243-2015_virusRNA -b ENSG_NR003286-4_RNA18SN5_rRNA -x 1001 -y 101 -l 500 -j ~/bin/VARNA/build/jar/VARNAcmd.jar
-
 #FOLD=1 for ViennaRNA, 0 for UNAFold
 hval=0.1
 gmax=4
@@ -224,7 +219,7 @@ if [ ! -z $GENE_2 ]
 then
 	hyb2_coverage -i $OUT".hyb" -q $LIMIT -a $GENE_1 -b $GENE_2
 else
-	echo "Failed to plot contact density map of second gene! Check input arguments (Gene -b)." 1>&2
+	echo "To plot contact density map of second gene, add to command: -b <GENE_ID_2>." 1>&2
 fi
 
 if [ -z $GENE_2 ] && [ -z $Y_COORD ] && [ ! -z $LEN ]
@@ -242,7 +237,7 @@ then
 	Y_END=$(($Y_COORD+$LEN-1))
 	hyb2_coverage -i $OUT".hyb" -q $LIMIT -a $GENE_1 -b $GENE_2 -w $X_COORD -x $X_END -y $Y_COORD -z $Y_END
 else
-	echo "Failed to plot zoomed-in contact density map! Check input arguments (Genes -a -b & Coords -x -y -l)." 1>&2
+	echo "To plot zoomed-in contact density map, add to command: -x <X_Coord> -y <Y_Coord> -l <Length>." 1>&2
 fi
 
 #Plot viewpoint graphs of selected genes
@@ -264,9 +259,10 @@ elif [ ! -z $X_COORD ] && [ ! -z $LEN ] && [ ! -z $GENE_2 ] && [ ! -z $Y_COORD ]
 then
 	hyb2_fold -i $OUT".hyb" -a $GENE_1 -b $GENE_2 -1 $DB_1 -2 $DB_2 -x $X_COORD -y $Y_COORD -l $LEN -j $VARNA -r $FOLD
 else
-	echo "Error! Aborting Generation of Secondary Structure! Check input arguments." 1>&2
+	echo "No Options Specified to Generate Secondary Structure." 1>&2
 fi
 
 echo "Analysis completed."
 echo "To compare between different datasets and plot differential coverage map, similarity heatmap, and differential structures, use:"
-echo "hyb2_compare -a condition1_rep1.contact.txt -b condition1_rep2.contact.txt -c cond1_rep3.contact.txt -d cond1_rep4.contact.txt -i condition2_rep1.contact.txt -j cond2_rep2.contact.txt -k cond2_rep3.contact.txt -l cond2_rep4.contact.txt -1 cond1_rep1.hyb -2 cond1_rep2.hyb -3 cond1_rep3.hyb -4 cond1_rep4.hyb -5 cond2_rep1.hyb -6 cond2_rep2.hyb -7 cond2_rep3.hyb -8 cond2_rep4.hyb -0 GENE_NAME -9 FASTA -v ~/dir_of_VARNAcmd.jar"
+echo "hyb2_compare -i <input.table> -a <GENE_ID> -d <FASTA>"
+echo "For more details, run: hyb2_compare"
