@@ -8,7 +8,8 @@ do
      case $OPTION in
          i) IN_FILE=$OPTARG ;;
          d) DB=$OPTARG ;;
-	 ?) 
+         o) OUT=$OPTARG ;;
+         ?)
 
              echo "incorrect option"
              exit 0
@@ -24,8 +25,11 @@ fi
 
 gunzip -c $IN_FILE > ${IN_FILE/.gz/}
 solexa2fasta.awk ${IN_FILE/.gz/} | fasta2tab.awk > ${IN_FILE/fastq.gz/tab}
-make_comp_fasta.pl ${IN_FILE/fastq.gz/tab} > ${IN_FILE/.fastq.gz/_comp.fasta}
+make_comp_fasta.pl ${IN_FILE/fastq.gz/tab} > $OUT"_comp.fasta"
 
 echo "Bowtie2 Mapping..."
-bowtie2 -D 20 -R 3 -N 0 -L 16 -k 20 --local -i S,1,0.50 --score-min L,18,0 --ma 1 --np 0 --mp 2,2 --rdg 5,1 --rfg 5,1 -p 64 -x ${DB/.fasta/} -f ${IN_FILE/.fastq.gz/_comp.fasta} > ${IN_FILE/fastq.gz/sam} 2> ${IN_FILE/fastq.gz/blast.err}
+bowtie2 -D 20 -R 3 -N 0 -L 16 -k 20 --local -i S,1,0.50 --score-min L,18,0 --ma 1 --np 0 --mp 2,2 --rdg 5,1 --rfg 5,1 -p 64 -x ${DB/.fasta/} -f $OUT"_comp.fasta" > $OUT".sam" 2> $OUT".blast.err"
 echo "Mapping Concluded"
+
+rm ${IN_FILE/fastq.gz/tab}
+rm $OUT"_comp.fasta"
