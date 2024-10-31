@@ -10,7 +10,6 @@ GENE <- as.character(args[3])
 FASTA <- as.character(args[4])
 VARNA <- as.character(args[5])
 GENE2 <- as.character(args[6])
-FASTA2 <- as.character(args[7])
 
 data <- data.table::fread(INPUT,header=T,sep="\t")
 colnames(data) <- c("x", "y", "uncapped_count")
@@ -164,10 +163,10 @@ server <- function(input, output, session) {
     }
   })
   observeEvent(input$fold, {
-    if (input$type == "Short-Ranged Intramolecular (<500nt Apart)") {system(paste0("hyb2_fold -i ", HYB, " -a ", GENE, " -1 ", FASTA, " -x ", input$x_coord, " -l ", input$len, " -j ", VARNA, " -0 1"))}
-    else if (input$type == "Long-Ranged Intramolecular") system(paste("hyb2_fold -i ", HYB, " -a ", GENE, " -1 ", FASTA, " -x ", input$x_coord, " -y ", input$y_coord, " -l ", input$len, " -j ", VARNA, " -0 1"))
-    else if (input$type == "Intermolecular") system(paste("hyb2_fold -i ", HYB, " -a ", GENE, " -b ", GENE2, " -1 ", FASTA, " -2 ", FASTA2, " -x ", input$x_coord, " -y ", input$y_coord," -l ", input$len, " -j ", VARNA, " -0 1"))
-    else if (input$type == "Homodimer") system(paste("hyb2_fold -i ", HYB, " -a ", GENE, " -b ", GENE2, " -1 ", FASTA, " -x ", input$x_coord, " -l ", input$len, " -j ", VARNA, " -0 1"))
+    if (input$type == "Short-Ranged Intramolecular (<500nt Apart)") {system(paste0("hyb2_fold -i ", HYB, " -a ", GENE, " -d ", FASTA, " -x ", input$x_coord, " -l ", input$len, " -j ", VARNA, " -0 1"))}
+    else if (input$type == "Long-Ranged Intramolecular") system(paste("hyb2_fold -i ", HYB, " -a ", GENE, " -d ", FASTA, " -x ", input$x_coord, " -y ", input$y_coord, " -l ", input$len, " -j ", VARNA, " -0 1"))
+    else if (input$type == "Intermolecular") system(paste("hyb2_fold -i ", HYB, " -a ", GENE, " -b ", GENE2, " -d ", FASTA, " -x ", input$x_coord, " -y ", input$y_coord," -l ", input$len, " -j ", VARNA, " -0 1"))
+    else if (input$type == "Homodimer") system(paste("hyb2_fold -i ", HYB, " -a ", GENE, " -b ", GENE2, " -d ", FASTA, " -x ", input$x_coord, " -l ", input$len, " -j ", VARNA, " -0 1"))
   })
 }
 
