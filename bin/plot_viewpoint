@@ -1,12 +1,11 @@
 #!/bin/bash -e 
 
 # parsing command line options
-while getopts "i:1:2:a:b:" OPTION
+while getopts "i:d:a:b:" OPTION
 do
      case $OPTION in
          i) HYB=$OPTARG ;;
-         1) DB_1=$OPTARG ;;
-         2) DB_2=$OPTARG ;;
+         d) DB_1=$OPTARG ;;
          a) GENE_1=$OPTARG ;;
          b) GENE_2=$OPTARG ;;
          ?)
@@ -16,6 +15,7 @@ do
              ;;
      esac
 done
+
 
 if [ -z $DB_2 ]
 then
@@ -63,4 +63,4 @@ fi
 
 rm $GENE_1*".length.txt"
 rm $GENE_1*"_ref.blast"
-
+rm ${HYB/.hyb/"_"$GENE_1"_"$GENE_2".blast"}
