@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-# hyb2_app -i Livefire.contact.txt -h Livefire.hyb -a ENSG_ENST_ZIKV-PE243-2015_virusRNA -1 all_Zika.fasta -j ~/bin/VARNA-master/build/jar/VARNAcmd.jar
+# hyb2_app -i Livefire.hyb -a ENSG_ENST_ZIKV-PE243-2015_virusRNA -d all_Zika.fasta -j ~/bin/VARNA-master/build/jar/VARNAcmd.jar
 
 VARNA=$(VARNAcmd.sh)
 
@@ -9,8 +9,8 @@ while getopts "i:a:b:d:j:" OPTION
 do
      case $OPTION in
          i) HYB=$OPTARG ;;
-         a) GENE=$OPTARG ;;
-         b) GENE2=$OPTARG ;;
+         a) GENE_1=$OPTARG ;;
+         b) GENE_2=$OPTARG ;;
          d) FASTA=$OPTARG ;;
          j) VARNA=$OPTARG ;;
          ?)
@@ -35,20 +35,14 @@ cp ~/hyb2_shiny.R .
 #calculate chimeras in 10x10 bin for plotting
 if [ -z $GENE_2 ] 
 then
-        echo "Plotting contact density map of $GENE_1 ..."
-        plot_hybrids_3.awk USE_ENTIRE_HYBRIDS=1 BIN_SIZE=10 GENE_1=$GENE_1 GENE_2=$GENE_1 $HYB | sed '2s/^/x\ty\tcount\n/' > ${HYB/.hyb/.$GENE_1".contact.txt"}
-        contact_density_map_indiv.R ${HYB/.hyb/.$GENE_1".contact.txt"} $LIMIT
-        echo "Contact Density Map of $GENE_1 Saved"
+        hyb2_coverage -i $HYB -a $GENE_1
         INPUT=${HYB/.hyb/.$GENE_1".contact.txt"}
-        Rscript -e 'shiny::runApp("hyb2_shiny.R", launch.browser=TRUE)' $INPUT $HYB $GENE $FASTA $VARNA $GENE $FASTA
+        Rscript -e 'shiny::runApp("hyb2_shiny.R", launch.browser=TRUE)' $INPUT $HYB $GENE_1 $FASTA $VARNA $GENE_1 $FASTA
 elif [ ! -z $GENE_2 ] 
 then
-        echo "Plotting contact density map of $GENE_1 and $GENE_2 ..."
-        awk -v GENE_1=$GENE_1 -v GENE_2=$GENE2 '{if ($4==GENE_1) print $0; if ($10==GENE_1) print $1"\t"$2"\t"$3"\t"$10"\t"$11"\t"$12"\t"$13"\t"$14"\t"$15"\t"$4"\t"$5"\t"$6"\t"$7"\t"$8"\t"$9}' $HYB | plot_hybrids_3.awk USE_ENTIRE_HYBRIDS=1 BIN_SIZE=10 GENE_1=$GENE_1 GENE_2=$GENE_2 | sed '2s/^/x\ty\tcount\n/' > ${HYB/.hyb/.$GENE_1"-"$GENE_2".contact.txt"}
-        cdm_2genes.R ${HYB/.hyb/.$GENE_1"-"$GENE_2".contact.txt"} $LIMIT $GENE_1 $GENE_2
-        echo "Contact Density Map of $GENE_1 and $GENE_2 Saved"
+        hyb2_coverage -i $HYB -a $GENE_1 -b $GENE_2
         INPUT=${HYB/.hyb/.$GENE_1"-"$GENE_2".contact.txt"}
-        Rscript -e 'shiny::runApp("hyb2_shiny.R", launch.browser=TRUE)' $INPUT $HYB $GENE $FASTA $VARNA $GENE2 $FASTA
+        Rscript -e 'shiny::runApp("hyb2_shiny.R", launch.browser=TRUE)' $INPUT $HYB $GENE_1 $FASTA $VARNA $GENE_2 $FASTA
 else
         echo "Something went wrong! Check input arguments."
 fi
