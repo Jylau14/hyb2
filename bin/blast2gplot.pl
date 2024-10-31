@@ -39,7 +39,6 @@ close REF_BLAST_FILE;
 foreach my $i (0 .. $N_GENES-1){
 	$top_gi{ $sorted_gi[$i] }++;
 }
-print "$#sorted_gi total genes with hits found\n";
 
 # putting lengths of all genes in hash %len addressed by gi.
 # WARNING: putting the lengths into an _array_ addressed by gi caused huge memory usage because gi's are large numbers 
