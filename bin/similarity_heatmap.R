@@ -20,7 +20,7 @@ Title <- ifelse(!is.na(TITLE), TITLE, data$ID[1])
 
 #plot contact density map, save as pdf
 cdm <- ggplot(data, aes(x,y))+
-  geom_tile(aes(fill=count2), show.legend=TRUE)+
+  geom_tile(aes(fill=count2), show.legend=TRUE, na.rm=TRUE)+
   guides(fill = guide_colourbar(barwidth = 0.5, barheight = 10, ticks.colour = "black" ,title = "Chimera Count", title.position = "right", 
                                 title.theme = element_text(angle = 270, size = 9.5), title.vjust = 0, title.hjust = 0.5,
                                 label.position = "left", label.theme = element_text(angle = 270, size = 9), label.vjust = 0, label.hjust = 0.5))+
