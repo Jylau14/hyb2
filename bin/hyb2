@@ -142,7 +142,7 @@ fi
 #If input is in fastq/gz or fasta format, convert to SAM using bowtie2
 if [ ! -f $OUT".hyb" ] && [[ "$IN_FILE"  == *fastq.gz ]]
 then
-	if bowtie2_fastq.gz2sam -i $IN_FILE -d $DB_1
+	if bowtie2_fastq.gz2sam -i $IN_FILE -d $DB_1 -o $OUT
         then
                 echo "SAM file generated"
         else
@@ -150,7 +150,7 @@ then
         fi
 elif [ ! -f $OUT".hyb" ] && [[ "$IN_FILE"  == *fastq ]]
 then
-	if bowtie2_fastq2sam -i $IN_FILE -d $DB_1
+	if bowtie2_fastq2sam -i $IN_FILE -d $DB_1 -o $OUT
 	then
 		echo "SAM file generated"
 	else
@@ -158,7 +158,7 @@ then
 	fi
 elif [ ! -f $OUT".hyb" ] && [[ "$IN_FILE"  == *fasta ]]
 then
-	if bowtie2_fasta2sam -i $IN_FILE -d $DB_1
+	if bowtie2_fasta2sam -i $IN_FILE -d $DB_1 -o $OUT
 	then
 		echo "SAM file generated"
 	else
@@ -166,19 +166,7 @@ then
 	fi
 fi
 
-if [[ "$IN_FILE"  == *fastq.gz ]]
-then
-        SAM=${IN_FILE/fastq.gz/sam}
-elif [[ "$IN_FILE"  == *fastq ]]
-then
-	SAM=${IN_FILE/fastq/sam}
-elif [[ "$IN_FILE"  == *fasta ]]
-then
-	SAM=${IN_FILE/fasta/sam}
-elif [[ "$IN_FILE"  == *sam ]]
-then
-	SAM=$IN_FILE
-fi
+SAM=$OUT".sam"
 
 if [[ "$IN_FILE"  == *hyb ]]
 then
