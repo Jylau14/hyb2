@@ -83,6 +83,7 @@ conda activate hyb2_macOS-arm
 ```
 After activating environment:
 ```bash
+# Hyb2 is an alias added during installation that points towards the directory of installation.
 hyb2 -i Hyb2/data/testData.sam -d Hyb2/data/Zika_18S.fasta -o test -a Zika_virusRNA -x 1001 -l 500 
 ```
 To run the program, the first thing to have is the sequence alignment map (SAM) file or a fastq file. Here, we've provided only the SAM file.
@@ -143,9 +144,9 @@ To get familiar with the command line arguements, it could be broadly explained 
 -q upperlimit_for_heatmap_chimeric_count (default value: 0.95 (%) )
 
 ### RNA Structure Folding
--x start_coord_of_1st_gene (cannot be longer than nucleotide length of 1st gene)
+-x start_coord_of_Arm1 (cannot be longer than nucleotide length of specified gene)
 
--y start_coord_of_2nd_gene (cannot be longer than nucleotide length of 2nd gene)
+-y start_coord_of_Arm2 (cannot be longer than nucleotide length of specified gene)
 
 -l lengths_of_fragments
 
