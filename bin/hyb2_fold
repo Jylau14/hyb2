@@ -198,7 +198,7 @@ bp_score.sh -c ${OUT_FILE/.hyb/_structure_coordinates.txt} -s ${OUT_FILE/.hyb/.b
 ls ${IN_FILE/.hyb/}__${OUT_FASTA/.fasta/}*VARNA_scores.txt > ${OUT_FILE/.hyb/_scores.txt}
 cat ${OUT_FILE/.hyb/_scores.txt} | while read line ; do echo -ne $line "\t" ; sum $line ; done > ${OUT_FILE/.hyb/_names_scores.txt}
 echo Top scoring structures:
-cat ${OUT_FILE/.hyb/_names_scores.txt} | sort -k2,2nr | head
+awk '{print $1"\t"$2}' ${OUT_FILE/.hyb/_names_scores.txt} | sort -k2,2nr | head
 
 # display structure in VARNA:
 #cat ${OUT_FILE/.hyb/_names_scores.txt} | sort -k2,2nr | head -n1 | while read name score; do vname=${name#*__} ; cat ${vname/.VARNA_scores.txt/.vienna}; echo Open ${vname/.VARNA_scores.txt/.vienna} in VARNA for more customization options; done
