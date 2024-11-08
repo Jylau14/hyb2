@@ -3,7 +3,7 @@
 #sam2hyb -i 45391.sam -d ~/Virus_Structure/ZIKV_Align/Genome_Filled/db/ZBRA/ZBRA_Filled.fasta -o test_sam2hyb
 
 # parsing command line options
-while getopts "i:d:" OPTION
+while getopts "i:d:o:" OPTION
 do
      case $OPTION in
          i) IN_FILE=$OPTARG ;;
