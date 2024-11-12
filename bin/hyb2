@@ -185,8 +185,8 @@ then
 	fi
 elif [ ! -f $OUT".hyb" ] && [[ "$IN_FILE"  == *sam ]]
 then
-	sam_filt $IN_FILE > ${SAM/.sam/.filt.sam}
-	if sam2hyb -i ${SAM/.sam/.filt.sam} -d $DB_1 -o $OUT -v $hval -g $gmax -e $ENERGY -r $FOLD
+	sam_filt $IN_FILE > ${SAM/.sam/.filt.sam} && mv ${SAM/.sam/.filt.sam} $SAM
+	if sam2hyb -i $SAM -d $DB_1 -o $OUT -v $hval -g $gmax -e $ENERGY -r $FOLD
 	then
 		echo "Hyb File Generated."
         else
