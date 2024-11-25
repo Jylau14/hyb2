@@ -50,6 +50,10 @@ Linux/ Mac Operating System with Miniconda Installed
 Download the appropriate version based on your OS, locate the file, then install by double-clicking:
 > https://www.oracle.com/java/technologies/downloads
 
+#
+Hyb2 can be used on **Windows** with Windows Subsystem for Linux (**WSL**) Installed, Guide Found Here:
+> https://github.com/Jylau14/hyb2/blob/main/README_WSL.txt
+
 ## Installation
 Hyb2 can be downloaded and installed with:
 
