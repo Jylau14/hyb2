@@ -15,7 +15,7 @@ min=2
 range=100
 LIMIT=0.95
 FOLDING=0
-VARNA=$(VARNAcmd.sh)
+VARNA="$(VARNAcmd.sh)"
 
 # Help message function
 print_help() {
