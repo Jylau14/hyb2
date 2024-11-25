@@ -17,7 +17,7 @@ hmax=10
 LIMIT=0.95
 ENERGY=0
 FOLD=1
-VARNA=$(VARNAcmd.sh)
+VARNA="$(VARNAcmd.sh)"
 
 # Help message function
 print_help() {
