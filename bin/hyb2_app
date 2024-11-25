@@ -32,19 +32,61 @@ fi
 
 cp ~/hyb2_shiny.R .
 
-#calculate chimeras in 10x10 bin for plotting
-if [ -z $GENE_2 ] 
+# Plot contact density map and start GUI
+if uname -a | grep WSL;
 then
-        hyb2_coverage -i $HYB -a $GENE_1
-        INPUT=${HYB/.hyb/.$GENE_1".contact.txt"}
-        Rscript -e 'shiny::runApp("hyb2_shiny.R", launch.browser=TRUE)' $INPUT $HYB $GENE_1 $FASTA $VARNA $GENE_1
-elif [ ! -z $GENE_2 ] 
-then
-        hyb2_coverage -i $HYB -a $GENE_1 -b $GENE_2
-        INPUT=${HYB/.hyb/.$GENE_1"-"$GENE_2".contact.txt"}
-        Rscript -e 'shiny::runApp("hyb2_shiny.R", launch.browser=TRUE)' $INPUT $HYB $GENE_1 $FASTA $VARNA $GENE_2
+        if [ -z $GENE_2 ]
+        then
+                hyb2_coverage -i $HYB -a $GENE_1
+                INPUT=${HYB/.hyb/.$GENE_1".contact.txt"}
+                Rscript -e 'shiny::runApp("hyb2_shiny.R", launch.browser=FALSE)' $INPUT $HYB $GENE_1 $FASTA $VARNA $GENE_1 > App.log.txt 2>&1 &
+                # Give time to receive link
+                sleep 5
+                # Extract the URL from the shiny_log.txt
+                app_url=$(grep -oP 'Listening on \Khttp://\S+' App.log.txt)
+                if [ -z "$app_url" ]
+                then
+                        echo "Error: Could not find the URL in App.log.txt."
+                        exit 1
+                else
+                        # Use wslview to open the URL in the default Windows browser
+                        echo "Starting GUI at: $app_url"
+                        wslview "$app_url"
+                fi
+        elif [ ! -z $GENE_2 ]
+        then
+                hyb2_coverage -i $HYB -a $GENE_1 -b $GENE_2
+                INPUT=${HYB/.hyb/.$GENE_1"-"$GENE_2".contact.txt"}
+                Rscript -e 'shiny::runApp("hyb2_shiny.R", launch.browser=FALSE)' $INPUT $HYB $GENE_1 $FASTA $VARNA $GENE_2 > App.log.txt 2>&1 &
+                # Give time to receive link
+                sleep 5
+                # Extract the URL from the shiny_log.txt
+                app_url=$(grep -oP 'Listening on \Khttp://\S+' App.log.txt)
+                if [ -z "$app_url" ]
+                then
+                        echo "Error: Could not find the URL in App.log.txt."
+                        exit 1
+                else
+                        # Use wslview to open the URL in the default Windows browser
+                        echo "Starting GUI at: $app_url"
+                        wslview "$app_url"
+                fi
+        else
+                echo "Something went wrong! Check input arguments."
+        fi
 else
-        echo "Something went wrong! Check input arguments."
+       if [ -z $GENE_2 ]
+        then
+                hyb2_coverage -i $HYB -a $GENE_1
+                INPUT=${HYB/.hyb/.$GENE_1".contact.txt"}
+                Rscript -e 'shiny::runApp("hyb2_shiny.R", launch.browser=TRUE)' $INPUT $HYB $GENE_1 $FASTA $VARNA $GENE_1
+        elif [ ! -z $GENE_2 ]
+        then
+                hyb2_coverage -i $HYB -a $GENE_1 -b $GENE_2
+                INPUT=${HYB/.hyb/.$GENE_1"-"$GENE_2".contact.txt"}
+                Rscript -e 'shiny::runApp("hyb2_shiny.R", launch.browser=TRUE)' $INPUT $HYB $GENE_1 $FASTA $VARNA $GENE_2
+        else
+                echo "Something went wrong! Check input arguments."
+        fi
 fi
-
 rm .Rprofile
