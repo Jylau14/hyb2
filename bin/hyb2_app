@@ -2,7 +2,7 @@
 
 # hyb2_app -i Livefire.hyb -a ENSG_ENST_ZIKV-PE243-2015_virusRNA -d all_Zika.fasta -j ~/bin/VARNA-master/build/jar/VARNAcmd.jar
 
-VARNA=$(VARNAcmd.sh)
+VARNA="$(VARNAcmd.sh)"
 
 # parsing command line options
 while getopts "i:a:b:d:j:" OPTION
