@@ -9,7 +9,7 @@ A ***streamlined*** program for analyzing RNA proximity ligation experiments fro
 **Additionally, creates an interactive GUI, and plots differences and similarities between experiments.**
 
 <p align="center">
-  <img src="https://github.com/Jylau14/hyb2/assets/110675091/7121ebda-6b16-444c-b07c-483ee595adb7" height="500" width="700">
+  <img src="https://github.com/user-attachments/assets/fde2431b-f942-4a3e-90c5-f5e11f222d85" height="500" width="700">
 </p>
 
 ## Table of Contents
